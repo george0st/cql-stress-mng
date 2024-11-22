@@ -6,7 +6,7 @@
 -node 10.129.53.159,10.129.53.154,10.129.53.153 
 -mode user=perf password=perf prepared protocolVersion=4 
 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=SizeTieredCompactionStrategy,max_threshold=32,min_threshold=6)" 
--rate "threads>=4" "threads<=8"
+-rate "threads>=4" "threads<=200"
 -graph "file=v5_read_1_local_one_$(date +%Y%m%d_%H%M%S).html" title=v5_read_1_local_one
 -reporting output-frequency=5s > "bbbv5_write_1_local_one_$(date +%Y%m%d_%H%M%S).txt"
 
