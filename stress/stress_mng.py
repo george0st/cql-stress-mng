@@ -5,6 +5,9 @@ from os import path
 from colorama import Fore, Style
 from glob import glob
 import stress.helper as helper
+from stress.access import Access
+import subprocess
+
 
 def get_template(template_path, perf_dir = "."):
 
@@ -37,7 +40,10 @@ def get_arguments(params: dict, arguments):
             params[values[0].strip()] = values[1].strip()
         else:
             key = values[0].strip()
-            itms = [itm.strip() for itm in params[key].split(",")]
+            if params.get(key, None):
+                itms = [itm.strip() for itm in params[key].split(",")]
+            else:
+                items = None
             iterators.append((key, itms))
             variables[key]=itms
 
@@ -104,14 +110,34 @@ def create_variables(params: dict, run_variable: dict):
 
     return new_variables
 
+def internal_command(line: str, params, simulation: bool = False, sleep = 2):
 
-def stress_test(params: dict, perf_dir = "."):
+    cql = None
+    cmd_params = line.split(",")
+    command=cmd_params[0].strip()
+    if command == "#REMOVE_KEYSPACE":
+        try:
+            if not simulation:
+                cql = Access(params)
+                cql.open()
+                cql.remove_keyspace(cmd_params[1].strip())
+            print(line)
+        finally:
+            if cql:
+                cql.close()
+        time.sleep(sleep)
+
+def stress_test(params: dict, perf_dir = ".", simulation: bool = False):
 
 
     for i in range(1, 100):
+        ext_cmd=True
         key=f"RUN{i}"
         if params.get(key, None) is None:
             break
+        if params[key].startswith("#"):
+            internal_command(params[key], params)
+            continue
 
         arguments=params[key].split(",")
 
@@ -136,11 +162,13 @@ def stress_test(params: dict, perf_dir = "."):
                     cmd = cmd.replace(f"%{variable}%", cmd_variable[variable])
 
             print("Combination:",run_value_index,">>",cmd)
+            if not simulation:
+                process = subprocess.run(cmd, shell=True)
             run_value_index += 1
         print()
 
 
-def main_execute(env="_cass*.env", perf_dir = "."):
+def main_execute(env="_cass*.env", perf_dir = ".", simulation: bool = False):
     unique_date= datetime.datetime.now().strftime("%Y-%m-%d %H_%M_%S")
 
     for file in glob(path.join(perf_dir, "config", env)):
@@ -148,8 +176,28 @@ def main_execute(env="_cass*.env", perf_dir = "."):
         print("FILE >>", file)
         global_params = Config(perf_dir).get_global_params(file)
         global_params["DATE"]=unique_date
-        output = stress_test(global_params)
+        output = stress_test(global_params, perf_dir, simulation)
 
+
+@click.group()
+def remove_group():
+    pass
+
+@remove_group.command()
+@click.option("-e", "--env", help="name of ENV file (default '_cass.env')", default="_cass.env")
+@click.option("-d", "--perf_dir", help="directory with perf_cql (default '.')", default=".")
+@click.option("-k", "--keyspace", help="remove keyspace", default="")
+@click.option("-s", "--sleep", help="sleep time in seconds", default="5")
+def remove(env, perf_dir, keyspace, sleep):
+    pass
+    # try:
+    #     cql = Access(params)
+    #     cql.open()
+    #     cql.remove_keyspace(cmd_params[1].strip())
+    # finally:
+    #     if cql:
+    #         cql.close()
+    # time.sleep(sleep)
 
 @click.group()
 def version_group():
@@ -195,9 +243,10 @@ def run_group():
 @run_group.command()
 @click.option("-e", "--env", help="name of ENV file (default '_cass.env')", default="_cass.env")
 @click.option("-d", "--perf_dir", help="directory with perf_cql (default '.')", default=".")
-def run(env, perf_dir):
+@click.option("-s", "--simulation", help="simulation without run (default 'F')", default="F")
+def run(env, perf_dir, simulation):
     """Run performance tests based on ENV file(s)."""
-    main_execute(env, perf_dir)
+    main_execute(env, perf_dir, helper.str2bool(simulation))
 
 cli = click.CommandCollection(sources=[run_group, version_group])
 
