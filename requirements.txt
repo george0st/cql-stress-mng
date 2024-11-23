@@ -9,7 +9,7 @@ click~=8.1
 # issue with matplotlib==3.9.2 under python 3.13t
 #matplotlib>=3.9.0,<=3.9.2
 
-#qgate-perf==0.4.50
+#qgate-stress==0.4.50
 
 # https://github.com/theskumar/python-dotenv
 python-dotenv~=1.0

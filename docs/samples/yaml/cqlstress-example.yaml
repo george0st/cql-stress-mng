@@ -1,11 +1,11 @@
 # insert data
-# cassandra-stress user profile=/home/perf/cqlstress-example.yaml ops(insert=1)
+# cassandra-stress user profile=/home/stress/cqlstress-example.yaml ops(insert=1)
 
 # read, using query simple1:
-# cassandra-stress profile=/home/perf/cqlstress-example.yaml ops(simple1=1)
+# cassandra-stress profile=/home/stress/cqlstress-example.yaml ops(simple1=1)
 
 # mixed workload (20/80)
-# cassandra-stress user profile=/home/perf/cqlstress-example.yaml ops(insert=2,simple1=8)
+# cassandra-stress user profile=/home/stress/cqlstress-example.yaml ops(insert=2,simple1=8)
 
 
 #
