@@ -17,9 +17,16 @@ def get_template(template_path, perf_dir = "."):
     template = template[:-1]
     return template
 
-def get_arguments(params: dict, arguments):
-    iterators=[]
+def get_variables(template, pattern=r"%([^%]+)%"):
+    import re
 
+    return re.findall(pattern, template)
+
+
+def get_arguments(params: dict, arguments):
+
+    variables={}
+    iterators=[]
 
     # define variables and iterators
     for index in range(1, len(arguments)):
@@ -30,7 +37,9 @@ def get_arguments(params: dict, arguments):
             params[values[0].strip()] = values[1].strip()
         else:
             key = values[0].strip()
-            iterators.append((key, params[key].split(",")))
+            itms = [itm.strip() for itm in params[key].split(",")]
+            iterators.append((key, itms))
+            variables[key]=itms
 
 
     # define iterator list size
@@ -44,7 +53,6 @@ def get_arguments(params: dict, arguments):
     switch = True
     for iter in iterators:
         size = count / len(iter[1])
-        iter_index = 0
         key = iter[0]
         values = iter[1]
 
@@ -74,39 +82,72 @@ def get_arguments(params: dict, arguments):
                         item[key] = iter_value
                     iter_index += 1
             switch = True
-    return iterator_list
+    return variables, iterator_list
+
+def create_variables(params: dict, run_variable: dict):
+    new_variables={}
+
+    for key in params.keys():
+        if run_variable.get(key, None):
+            new_variables[key]=run_variable[key]
+        else:
+            new_variables[key]=params[key]
+
+    # replace variables
+    for key in new_variables.keys():
+        itm=new_variables[key]
+        variables=get_variables(itm)
+        if variables:
+            for variable in variables:
+                itm = itm.replace(f"%{variable}%", new_variables[variable])
+            new_variables[key]=itm
+
+    return new_variables
+
 
 def stress_test(params: dict, perf_dir = "."):
 
-    for i in range(100):
+
+    for i in range(1, 100):
         key=f"RUN{i}"
-        if params.get(key, None):
-            arguments=params[key].split(",")
+        if params.get(key, None) is None:
+            break
 
-            # get template from RUN
-            template = get_template(arguments[0].strip(), perf_dir)
+        arguments=params[key].split(",")
 
-            # get list of iterator
-            iterator_list=get_arguments(params, arguments)
+        # get template from RUN (parse first argument)
+        template = get_template(arguments[0].strip(), perf_dir)
 
-            # create command based on template (replace variables)
+        # get list of variables for RUN (parse other arguments)
+        run_variables, run_variable_values=get_arguments(params, arguments)
 
+        # get variables from template
+        variables=get_variables(template)
 
-            print(template)
+        # create command
+        run_value_index=0
+        for combination in range(len(run_variable_values)):
 
-            print("  ",params[key])
+            cmd_variable = create_variables(params, run_variable_values[combination])
+            cmd = template
+
+            for variable in variables:
+                if cmd_variable.get(variable, None):
+                    cmd = cmd.replace(f"%{variable}%", cmd_variable[variable])
+
+            print("Combination:",run_value_index,">>",cmd)
+            run_value_index += 1
+        print()
 
 
 def main_execute(env="_cass*.env", perf_dir = "."):
-    unigue_date= datetime.datetime.now().strftime("YYYY-%H%M%S")
+    unique_date= datetime.datetime.now().strftime("%Y-%m-%d %H_%M_%S")
 
     for file in glob(path.join(perf_dir, "config", env)):
 
         print("FILE >>", file)
         global_params = Config(perf_dir).get_global_params(file)
-        global_params["DATE"]=unigue_date
-
-
+        global_params["DATE"]=unique_date
         output = stress_test(global_params)
 
 
