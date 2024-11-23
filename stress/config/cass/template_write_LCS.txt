@@ -3,4 +3,4 @@
 -mode user=%USER% password=%PWD% prepared protocolVersion=%PROTOCOL%
 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=LeveledCompactionStrategy,sstable_size_in_mb=160,fanout_size=10)"
 -rate threads=%THREAD%
--reporting output-frequency=5s > %OUTPUT%
+-reporting output-frequency=5s > "%OUTPUT%"

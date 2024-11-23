@@ -1,6 +1,6 @@
 from os import path
 from dotenv import dotenv_values
-import stress.cql_helper
+import cql_helper
 
 
 class ConfigSetting:
@@ -59,7 +59,7 @@ class CQLConfig:
             global_param[key]=self._config[key]
 
         password_path =self._config["PWD"]
-        global_param['PWD'] = stress.cql_helper.read_file_line(path.join(self._perf_dir, password_path)) if password_path else ConfigSetting.PASSWORD
+        global_param['PWD'] = cql_helper.read_file_line(path.join(self._perf_dir, password_path)) if password_path else ConfigSetting.PASSWORD
 
         return global_param
 

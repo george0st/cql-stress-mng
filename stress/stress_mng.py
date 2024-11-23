@@ -3,10 +3,10 @@ import datetime, time
 from os import path
 from colorama import Fore, Style
 from glob import glob
-import stress.cql_helper as helper
-from stress.cql_access import CQLAccess
+import cql_helper as helper
+from cql_access import CQLAccess
 import subprocess
-from stress.cql_config import CQLConfig
+from cql_config import CQLConfig
 
 def get_template(template_path, perf_dir = "."):
 
