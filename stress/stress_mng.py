@@ -7,6 +7,8 @@ import cql_helper as helper
 from cql_access import CQLAccess
 import subprocess
 from cql_config import CQLConfig
+import re
+
 
 def get_template(template_path, perf_dir = "."):
 
@@ -20,10 +22,7 @@ def get_template(template_path, perf_dir = "."):
     return template
 
 def get_variables(template, pattern=r"%([^%]+)%"):
-    import re
-
     return re.findall(pattern, template)
-
 
 def get_arguments(params: dict, arguments):
 
@@ -109,7 +108,7 @@ def create_variables(params: dict, run_variable: dict):
 
     return new_variables
 
-def internal_command(line: str, params, simulation: bool = False, sleep = 2):
+def internal_command(line: str, params, simulation: bool = False, sleep = 5):
 
     cql = None
     cmd_params = line.split(",")
@@ -127,7 +126,6 @@ def internal_command(line: str, params, simulation: bool = False, sleep = 2):
         time.sleep(sleep)
 
 def stress_test(params: dict, perf_dir = ".", simulation: bool = False):
-
 
     for i in range(1, 100):
         ext_cmd=True
@@ -175,7 +173,7 @@ def main_execute(env="_cass*.env", perf_dir = ".", simulation: bool = False):
         print("FILE >>", file)
         global_params = CQLConfig(perf_dir).get_global_params(file)
         global_params["DATE"]=unique_date
-        output = stress_test(global_params, perf_dir, simulation)
+        stress_test(global_params, perf_dir, simulation)
 
 
 @click.group()
@@ -188,15 +186,10 @@ def remove_group():
 @click.option("-k", "--keyspace", help="remove keyspace", default="")
 @click.option("-s", "--sleep", help="sleep time in seconds", default="5")
 def remove(env, perf_dir, keyspace, sleep):
-    pass
-    # try:
-    #     cql = Access(params)
-    #     cql.open()
-    #     cql.remove_keyspace(cmd_params[1].strip())
-    # finally:
-    #     if cql:
-    #         cql.close()
-    # time.sleep(sleep)
+    for file in glob(path.join(perf_dir, "config", env)):
+        params = CQLConfig(perf_dir).get_global_params(file)
+        internal_command(f"#REMOVE_KEYSPACE,{keyspace}", params, False, int(sleep))
+        break
 
 @click.group()
 def version_group():
@@ -247,7 +240,7 @@ def run(env, perf_dir, simulation):
     """Run performance tests based on ENV file(s)."""
     main_execute(env, perf_dir, helper.str2bool(simulation))
 
-cli = click.CommandCollection(sources=[run_group, version_group])
+cli = click.CommandCollection(sources=[run_group, remove_group, version_group])
 
 if __name__ == '__main__':
     cli()

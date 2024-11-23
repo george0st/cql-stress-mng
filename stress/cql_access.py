@@ -76,7 +76,6 @@ class CQLAccess:
 
         try:
             session = self.create_session(Setting.TIMEOUT_CREATE_MODEL)
-            session.default_consistency_level
             session.execute(f"DROP KEYSPACE IF EXISTS {keyspace};")
         except Exception as ex:
             print(Fore.LIGHTRED_EX + f"    {type(ex).__name__}: {str(ex)}" + Style.RESET_ALL)
