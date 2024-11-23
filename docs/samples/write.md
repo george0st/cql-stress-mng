@@ -26,7 +26,7 @@
 - -reporting output-frequency=5s > "v5_write_3_each_quorum_$(date +%Y%m%d_%H%M%S).txt"
 
  
-#2. Verze 4
+# 2. Verze 4
 
 ### 2.1 WRITE, CL=LOCAL_ONE
 - ./apache-cassandra-5.0.2/tools/bin/cassandra-stress write duration=1m cl=LOCAL_ONE 
