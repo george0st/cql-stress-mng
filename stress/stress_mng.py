@@ -1,13 +1,12 @@
-from stress.config import Config
 import click
 import datetime, time
 from os import path
 from colorama import Fore, Style
 from glob import glob
-import stress.helper as helper
-from stress.access import Access
+import stress.cql_helper as helper
+from stress.cql_access import CQLAccess
 import subprocess
-
+from stress.cql_config import CQLConfig
 
 def get_template(template_path, perf_dir = "."):
 
@@ -118,7 +117,7 @@ def internal_command(line: str, params, simulation: bool = False, sleep = 2):
     if command == "#REMOVE_KEYSPACE":
         try:
             if not simulation:
-                cql = Access(params)
+                cql = CQLAccess(params)
                 cql.open()
                 cql.remove_keyspace(cmd_params[1].strip())
             print(line)
@@ -174,7 +173,7 @@ def main_execute(env="_cass*.env", perf_dir = ".", simulation: bool = False):
     for file in glob(path.join(perf_dir, "config", env)):
 
         print("FILE >>", file)
-        global_params = Config(perf_dir).get_global_params(file)
+        global_params = CQLConfig(perf_dir).get_global_params(file)
         global_params["DATE"]=unique_date
         output = stress_test(global_params, perf_dir, simulation)
 

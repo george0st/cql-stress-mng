@@ -13,7 +13,7 @@ class Setting:
     TIMEOUT = 40
     TIMEOUT_CREATE_MODEL = 900
 
-class Access:
+class CQLAccess:
     """The access via CQL"""
 
     def __init__(self, run_setup):
