@@ -1,0 +1,6 @@
+%CMD% %OPERATION% duration=%DURATION% cl=%CL%
+-node %IP%
+-mode user=%USER% password=%PWD% prepared protocolVersion=%PROTOCOL%
+-schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=UnifiedCompactionStrategy,scaling_parameters='L2, T10')"
+-rate threads=%THREAD%
+-reporting output-frequency=5s > %OUTPUT%
