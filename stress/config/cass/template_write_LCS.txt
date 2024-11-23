@@ -1,4 +1,4 @@
-%CMD% %OPERATION% duration=%DURATION% cl=%CL%
+%CMD% %OPERATION% duration=%DURATION% cl=%CL% no-warmup
 -node %IP%
 -mode user=%USER% password=%PWD% prepared protocolVersion=%PROTOCOL%
 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=LeveledCompactionStrategy,sstable_size_in_mb=160,fanout_size=10)"

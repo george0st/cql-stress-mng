@@ -28,6 +28,7 @@ def get_arguments(params: dict, arguments):
 
     variables={}
     iterators=[]
+    iterator_list=[]
 
     # define variables and iterators
     for index in range(1, len(arguments)):
@@ -51,7 +52,8 @@ def get_arguments(params: dict, arguments):
     for iter in iterators:
         key = iter[0]
         count = count * len(iter[1])
-    iterator_list = [-1] * count
+    if len(iterators)>0:
+        iterator_list = [-1] * count
 
     # create combinations
     switch = True
@@ -92,10 +94,11 @@ def create_variables(params: dict, run_variable: dict):
     new_variables={}
 
     for key in params.keys():
-        if run_variable.get(key, None):
-            new_variables[key]=run_variable[key]
-        else:
-            new_variables[key]=params[key]
+        if run_variable:
+            if run_variable.get(key, None):
+                new_variables[key]=run_variable[key]
+                continue
+        new_variables[key]=params[key]
 
     # replace variables
     for key in new_variables.keys():
@@ -147,21 +150,33 @@ def stress_test(params: dict, perf_dir = ".", simulation: bool = False):
         # get variables from template
         variables=get_variables(template)
 
-        # create command
-        run_value_index=0
-        for combination in range(len(run_variable_values)):
-
-            cmd_variable = create_variables(params, run_variable_values[combination])
+        if len(run_variable_values)==0:
+            cmd_variable = create_variables(params, None)
             cmd = template
 
             for variable in variables:
                 if cmd_variable.get(variable, None):
                     cmd = cmd.replace(f"%{variable}%", cmd_variable[variable])
 
-            print("Combination:",run_value_index,">>",cmd)
-            if not simulation:
-                process = subprocess.run(cmd, shell=True)
-            run_value_index += 1
+                print("Combination:",0,">>",cmd)
+                if not simulation:
+                    process = subprocess.run(cmd, shell=True)
+        else:
+            # create command
+            run_value_index=0
+            for combination in range(len(run_variable_values)):
+
+                cmd_variable = create_variables(params, run_variable_values[combination])
+                cmd = template
+
+                for variable in variables:
+                    if cmd_variable.get(variable, None):
+                        cmd = cmd.replace(f"%{variable}%", cmd_variable[variable])
+
+                print("Combination:",run_value_index,">>",cmd)
+                if not simulation:
+                    process = subprocess.run(cmd, shell=True)
+                run_value_index += 1
         print()
 
 

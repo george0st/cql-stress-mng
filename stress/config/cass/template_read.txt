@@ -1,4 +1,4 @@
-%CMD% %OPERATION% duration=%DURATION% cl=%CL%
+%CMD% %OPERATION% duration=%DURATION% cl=%CL% no-warmup
 -node %IP%
 -mode user=%USER% password=%PWD% prepared protocolVersion=%PROTOCOL%
 -rate threads=%THREAD%
