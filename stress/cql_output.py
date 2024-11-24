@@ -49,6 +49,7 @@ class CQLOutput:
     def print_header(self):
         self.print("#!/bin/sh")
         self.print("# GENERATED: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        self.print(f'curr_date=$(date + \"%Y-%m-%d %H-%M-%S\")')
 
     def print_footer(self):
         pass
