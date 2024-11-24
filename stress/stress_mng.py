@@ -7,6 +7,7 @@ import cql_helper as helper
 from cql_access import CQLAccess
 import subprocess
 from cql_config import CQLConfig
+from cql_output import CQLOutput
 import re
 
 
@@ -37,6 +38,7 @@ def get_arguments(params: dict, arguments):
 
         if len(values) == 2:  # create KEY=VALUE
             params[values[0].strip()] = values[1].strip()
+            #variables[values[0].strip()] = values[1].strip()
         else:
             key = values[0].strip()
             if params.get(key, None):
@@ -122,13 +124,12 @@ def internal_command(line: str, params, simulation: bool = False, sleep = 5):
                 cql = CQLAccess(params)
                 cql.open()
                 cql.remove_keyspace(cmd_params[1].strip())
-            print(line)
         finally:
             if cql:
                 cql.close()
         time.sleep(sleep)
 
-def stress_test(params: dict, perf_dir = ".", simulation: bool = False):
+def stress_test(output: CQLOutput, params: dict, perf_dir = ".", global_counter=0):
 
     for i in range(1, 100):
         ext_cmd=True
@@ -152,44 +153,65 @@ def stress_test(params: dict, perf_dir = ".", simulation: bool = False):
 
         if len(run_variable_values)==0:
             cmd_variable = create_variables(params, None)
+            #cmd_variable = create_variables(run_variables, None)
             cmd = template
 
             for variable in variables:
                 if cmd_variable.get(variable, None):
                     cmd = cmd.replace(f"%{variable}%", cmd_variable[variable])
 
-                print("Combination:",0,">>",cmd)
-                if not simulation:
-                    process = subprocess.run(cmd, shell=True)
+                global_counter+=1
+                output.print_cmd(cmd, global_counter, 1, cmd_variable)
+                # output.print(f"echo 'START: {global_counter}/{1}'...")
+                # output.print(cmd)
+                # output.print(f"echo 'END  : {global_counter}/{1}'")
+
         else:
             # create command
-            run_value_index=0
+            run_value_index=1
             for combination in range(len(run_variable_values)):
 
                 cmd_variable = create_variables(params, run_variable_values[combination])
+                #cmd_variable = create_variables(run_variables, run_variable_values[combination])
                 cmd = template
 
                 for variable in variables:
                     if cmd_variable.get(variable, None):
                         cmd = cmd.replace(f"%{variable}%", cmd_variable[variable])
 
-                print("Combination:",run_value_index,">>",cmd)
-                if not simulation:
-                    process = subprocess.run(cmd, shell=True)
+                global_counter += 1
+                output.print_cmd(cmd, global_counter, run_value_index, cmd_variable)
+                # output.print(f"echo 'START: {global_counter}/{run_value_index}'...")
+                # output.print(cmd)
+                # output.print(f"echo 'END  : {global_counter}/{run_value_index}'")
+
                 run_value_index += 1
-        print()
+        output.print()
+    return global_counter
 
 
-def main_execute(env="_cass*.env", perf_dir = ".", simulation: bool = False):
+def main_execute(env="_cass*.env", perf_dir = ".", log=""):
     unique_date= datetime.datetime.now().strftime("%Y-%m-%d %H_%M_%S")
+    global_counter=0
 
-    for file in glob(path.join(perf_dir, "config", env)):
+    output = None
+    try:
+        output = CQLOutput(perf_dir, log)
+        output.open()
 
-        print("FILE >>", file)
-        global_params = CQLConfig(perf_dir).get_global_params(file)
-        global_params["DATE"]=unique_date
-        stress_test(global_params, perf_dir, simulation)
+        for file in glob(path.join(perf_dir, "config", env)):
 
+            output.print(f"echo 'Based on: {file}'")
+            global_params = CQLConfig(perf_dir).get_global_params(file)
+            global_params["DATE"] = unique_date
+            global_counter += stress_test(output, global_params, perf_dir, global_counter)
+
+    except Exception as ex:
+        output.print(f"SYSTEM ERROR in 'run_executor': {type(ex).__name__} - '{str(ex) if ex is not None else '!! Noname exception !!'}'")
+
+    finally:
+        if output:
+            output.close()
 
 @click.group()
 def remove_group():
@@ -250,10 +272,10 @@ def run_group():
 @run_group.command()
 @click.option("-e", "--env", help="name of ENV file (default '_cass.env')", default="_cass.env")
 @click.option("-d", "--perf_dir", help="directory with perf_cql (default '.')", default=".")
-@click.option("-s", "--simulation", help="simulation without run (default 'F')", default="F")
-def run(env, perf_dir, simulation):
+@click.option("-l", "--log", help="output (default 'stress-run.sh')", default="stress-run.sh")
+def run(env, perf_dir, log):
     """Run performance tests based on ENV file(s)."""
-    main_execute(env, perf_dir, helper.str2bool(simulation))
+    main_execute(env, perf_dir, log)
 
 cli = click.CommandCollection(sources=[run_group, remove_group, version_group])
 
@@ -294,9 +316,3 @@ if __name__ == '__main__':
 #     print(f"Celkový počet chyb: {results[20]}")
 # else:
 #     print("Nepodařilo se najít výsledky v log souboru.")
-
-
-
-#if __name__ == '__main__':
-    # process = subprocess.run('notepad', shell=True)
-    # process.wait()
