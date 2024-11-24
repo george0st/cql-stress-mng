@@ -110,6 +110,9 @@ def create_variables(params: dict, run_variable: dict):
             for variable in variables:
                 if new_variables.get(variable, None):
                     itm = itm.replace(f"%{variable}%", new_variables[variable])
+                else:
+                    # TODO: propagate warning
+                    print(f"Warning: missing variable {variable}")
             new_variables[key]=itm
 
     return new_variables
