@@ -1,14 +1,14 @@
 # cql-stress-mng
-An easy management of CQL stress tests with the 'cassandra-stress' tool.
+An easy management of CQL stress tests with the official 'cassandra-stress' tool. You can use
+the solution for tests not only cassandra, but also Scylla and AstraDB.
 
 Key benefits:
- - generation and run bundle of tests for 'cassandra-stress'
- - summary outputs of tests
- - generation of graphs
+ - generation bundle of tests for 'cassandra-stress'
+ - support keyspace remove
+ - generate test summaries
+ - generate graphs
 
 Pre-requisities:
  - python >= 3.11
  - install 'cassandra-stress' tool
  - access to cassandra cluster (list of IP addresses and username/password)
- - NOTE: You can use the last cassandra-stress for test old cassandra version or Scylla, AstraDB
-

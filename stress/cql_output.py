@@ -1,6 +1,9 @@
 #import os.path
+import datetime
+from datetime import datetime
 import os
 from os import path, makedirs
+import platform
 
 
 class CQLOutput:
@@ -10,6 +13,7 @@ class CQLOutput:
         self._output_file = output_file
         self._mode=mode
         self._file = None
+        self._newLine="\n" if platform.system().lower()=="windows" else os.linesep
 
     def open(self):
         if self._output_file is not None:
@@ -27,11 +31,9 @@ class CQLOutput:
 
     def print(self, out: str = ""):
 
-
         # print to the file 'out'
         if self._file is not None:
-            self._file.write(f"{out}{os.linesep}")
-            #self._file.writelines(out)
+            self._file.write(f"{out}{self._newLine}")
         print(out)
 
     def print_cmd(self, cmd, global_counter, run_value_index, params:dict):
@@ -43,13 +45,10 @@ class CQLOutput:
         else:
             self.print(f"echo 'START {params['OPERATION']}: {global_counter}/{run_value_index}...'")
         self.print(cmd)
-        #self.print(f"echo 'END  : {global_counter}/{run_value_index}'")
 
     def print_header(self):
-        pass
+        self.print("#!/bin/sh")
+        self.print("# GENERATED: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     def print_footer(self):
-        pass
-
-    def print_detail(self):
         pass

@@ -108,7 +108,11 @@ def create_variables(params: dict, run_variable: dict):
         variables=get_variables(itm)
         if variables:
             for variable in variables:
-                itm = itm.replace(f"%{variable}%", new_variables[variable])
+                if new_variables.get(variable, None):
+                    itm = itm.replace(f"%{variable}%", new_variables[variable])
+                else:
+                    # TODO: propagate warning
+                    print(f"Warning: missing variable {variable}")
             new_variables[key]=itm
 
     return new_variables
@@ -131,7 +135,7 @@ def internal_command(line: str, params, simulation: bool = False, sleep = 5):
 
 def stress_test(output: CQLOutput, params: dict, perf_dir = ".", global_counter=0):
 
-    for i in range(1, 100):
+    for i in range(100):
         ext_cmd=True
         key=f"RUN{i}"
         if params.get(key, None) is None:
@@ -198,6 +202,7 @@ def main_execute(env="_cass*.env", perf_dir = ".", log=""):
     try:
         output = CQLOutput(perf_dir, log)
         output.open()
+        output.print_header()
 
         for file in glob(path.join(perf_dir, "config", env)):
 
