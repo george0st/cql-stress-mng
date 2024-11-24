@@ -108,7 +108,8 @@ def create_variables(params: dict, run_variable: dict):
         variables=get_variables(itm)
         if variables:
             for variable in variables:
-                itm = itm.replace(f"%{variable}%", new_variables[variable])
+                if new_variables.get(variable, None):
+                    itm = itm.replace(f"%{variable}%", new_variables[variable])
             new_variables[key]=itm
 
     return new_variables
