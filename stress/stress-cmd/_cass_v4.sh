@@ -1,6 +1,6 @@
 #!/bin/sh
-# GENERATED: 2024-11-24 19:45:28
-curr_date=$(date + "%Y-%m-%d %H_%M_%S")
+# GENERATED: 2024-11-24 19:49:48
+curr_date=$(date + "%Y-%m-%d %H-%M-%S")
 echo 'Based on: .\config\_cass_v4_1_local_one.env'
 echo 'START remove: 1/1...'
 python3.11 stress/stress_mng.py remove -e _cass_v4_1_local_one.env -k keyspace1 -d stress -s 8
