@@ -48,6 +48,13 @@ def read_file_line(file) -> str:
     with open(file) as f:
         return f.readline()
 
-def read_file_whole(file) -> str:
+def read_file_lines(file) -> list[str]:
     with open(file) as f:
         return f.readlines()
+
+def read_file_all(file) -> str:
+    with open(file) as f:
+        content=""
+        for itm in f.readlines():
+            content += f"{itm.strip()}\n"
+        return content[:-1]
