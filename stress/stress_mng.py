@@ -5,7 +5,6 @@ from colorama import Fore, Style
 from glob import glob
 import cql_helper as helper
 from cql_access import CQLAccess
-import subprocess
 from cql_config import CQLConfig
 from cql_output import CQLOutput
 import re
@@ -140,9 +139,6 @@ def stress_test(output: CQLOutput, params: dict, perf_dir = ".", global_counter=
         key=f"RUN{i}"
         if params.get(key, None) is None:
             break
-        if params[key].startswith("#"):
-            internal_command(params[key], params)
-            continue
 
         arguments=params[key].split(",")
 
@@ -166,10 +162,6 @@ def stress_test(output: CQLOutput, params: dict, perf_dir = ".", global_counter=
 
                 global_counter+=1
                 output.print_cmd(cmd, global_counter, 1, cmd_variable)
-                # output.print(f"echo 'START: {global_counter}/{1}'...")
-                # output.print(cmd)
-                # output.print(f"echo 'END  : {global_counter}/{1}'")
-
         else:
             # create command
             run_value_index=1
@@ -185,10 +177,6 @@ def stress_test(output: CQLOutput, params: dict, perf_dir = ".", global_counter=
 
                 global_counter += 1
                 output.print_cmd(cmd, global_counter, run_value_index, cmd_variable)
-                # output.print(f"echo 'START: {global_counter}/{run_value_index}'...")
-                # output.print(cmd)
-                # output.print(f"echo 'END  : {global_counter}/{run_value_index}'")
-
                 run_value_index += 1
         output.print()
     return global_counter
@@ -240,35 +228,24 @@ def version_group():
 @version_group.command()
 def version():
     """Versions of key components."""
-    # from qgate_perf import __version__ as perf_version
-    # from qgate_graph import __version__ as graph_version
-    # from numpy import __version__ as numpy_version
-    # from cassandra import __version__ as cassandra_version
-    # from matplotlib import __version__ as matplotlibe_version
-    # from prettytable import PrettyTable
-    # from colorama import Fore, Style
-    # import version
-    # import sys
-    #
-    # table = PrettyTable()
-    # table.border = True
-    # table.header = True
-    # table.padding_width = 1
-    # table.max_table_width = 75
-    #
-    # table.field_names = ["Component", "Version"]
-    # table.align = "l"
-    #
-    # table.add_row([Fore.LIGHTRED_EX + "perf_cql"+ Style.RESET_ALL, Fore.LIGHTRED_EX + version.__version__+Style.RESET_ALL])
-    # table.add_row(["qgate_perf", perf_version])
-    # table.add_row(["qgate_graph", graph_version])
-    # table.add_row(["numpy", numpy_version])
-    # table.add_row(["cassandra-driver", cassandra_version])
-    # table.add_row(["matplotlib", matplotlibe_version])
-    # table.add_row(["python", sys.version])
-    # print(table)
-    pass
+    from cassandra import __version__ as cassandra_version
+    from prettytable import PrettyTable
+    import version
+    import sys
 
+    table = PrettyTable()
+    table.border = True
+    table.header = True
+    table.padding_width = 1
+    table.max_table_width = 75
+
+    table.field_names = ["Component", "Version"]
+    table.align = "l"
+
+    table.add_row([Fore.LIGHTRED_EX + "stress"+ Style.RESET_ALL, Fore.LIGHTRED_EX + version.__version__+Style.RESET_ALL])
+    table.add_row(["cassandra-driver", cassandra_version])
+    table.add_row(["python", sys.version])
+    print(table)
 
 @click.group()
 def run_group():
