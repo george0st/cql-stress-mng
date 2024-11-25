@@ -133,7 +133,7 @@ def internal_command(line: str, params, simulation: bool = False, sleep = 5):
                 cql.close()
         time.sleep(sleep)
 
-def stress_test(output: CQLOutput, params: dict, perf_dir = ".", global_counter=0):
+def stress_test(output: CQLOutput, params: dict, perf_dir = ".", counter=0):
 
     for i in range(100):
         ext_cmd=True
@@ -161,8 +161,8 @@ def stress_test(output: CQLOutput, params: dict, perf_dir = ".", global_counter=
                 if cmd_variable.get(variable, None):
                     cmd = cmd.replace(f"%{variable}%", cmd_variable[variable])
 
-                global_counter+=1
-                output.print_cmd(cmd, global_counter, 1, cmd_variable)
+            counter+=1
+            output.print_cmd(cmd, counter, 1, cmd_variable)
         else:
             # create command
             run_value_index=1
@@ -176,11 +176,11 @@ def stress_test(output: CQLOutput, params: dict, perf_dir = ".", global_counter=
                     if cmd_variable.get(variable, None):
                         cmd = cmd.replace(f"%{variable}%", cmd_variable[variable])
 
-                global_counter += 1
-                output.print_cmd(cmd, global_counter, run_value_index, cmd_variable)
+                counter += 1
+                output.print_cmd(cmd, counter, run_value_index, cmd_variable)
                 run_value_index += 1
         output.print()
-    return global_counter
+    return counter
 
 
 def main_execute(env="_cass*.env", perf_dir = ".", log=""):
@@ -198,7 +198,7 @@ def main_execute(env="_cass*.env", perf_dir = ".", log=""):
             output.print(f"echo 'Based on: {file}'")
             global_params = CQLConfig(perf_dir).get_global_params(file)
             global_params["DATE"] = unique_date
-            global_counter += stress_test(output, global_params, perf_dir, global_counter)
+            global_counter = stress_test(output, global_params, perf_dir, global_counter)
 
     except Exception as ex:
         output.print(f"SYSTEM ERROR in 'run_executor': {type(ex).__name__} - '{str(ex) if ex is not None else '!! Noname exception !!'}'")

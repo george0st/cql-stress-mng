@@ -16,28 +16,27 @@ class StressSummary:
 
     def _parse_content(self, file_name, content) -> dict:
 
+        output={}
 
-        #"Op rate                   :    5,823 op/s  [WRITE: 5,823 op/s]"
-        #"Latency mean              :    0.7 ms [WRITE: 0.7 ms]"
-        #"Latency median            :    0.6 ms [WRITE: 0.6 ms]"
-        #"Latency 95th percentile   :    0.9 ms [WRITE: 0.9 ms]"
-        #"Latency 99th percentile   :    1.3 ms [WRITE: 1.3 ms]"
-        #"Latency 99.9th percentile :    3.0 ms [WRITE: 3.0 ms]"
-        #"Latency max               :  210.4 ms [WRITE: 210.4 ms]"
+        # basic info
+        output["operation_type"]=self._get_pattern_item(f"Type:(.*)$", content)
+        output["duration"] = self._get_pattern_item(f"Duration:(.*)$", content)
+        output["consistency_level"] = self._get_pattern_item(f"Consistency Level:(.*)$", content)
+        output["executors"] = self._get_pattern_item("Thread Count:(.*)$", content)
 
-        duration = self._get_pattern_item(f"Duration:(.*)$", content)
-        executors = self._get_pattern_item("Thread Count:(.*)$", content)
-        compaction = self._get_pattern_item("Table Compaction Strategy:(.*)$", content)
-        compaction_option = self._get_pattern_item("Table Compaction Strategy Options:(.*)$", content)
-        performance = self._get_pattern_item("Op rate[.]*:(.*)$", content)
+        # optional (can be zero for read operation)
+        output["compaction"] = self._get_pattern_item("Table Compaction Strategy:(.*)$", content)
+        output["compaction_option"] = self._get_pattern_item("Table Compaction Strategy Options:(.*)$", content)
 
-        match=re.findall(f"Duration:(.*)$", content, re.MULTILINE)
-
-
-        if match:
-            for itm in match:
-                print(itm)
-        #pattern=r"%([^%]+)%"
+        # performance details
+        output["performance"] = self._get_pattern_item("Op rate.+:(.+) op\/s  \[.+\]", content).replace(",","")
+        output["avrg"] = self._get_pattern_item("Latency mean.+:(.+)\[.+\]", content).replace(",","")
+        output["median"] = self._get_pattern_item("Latency median.+:(.+)\[.+\]", content).replace(",","")
+        output["latency_95th"] = self._get_pattern_item("Latency 95th percentile.+:(.+)\[.+\]", content).replace(",","")
+        output["latency_99th"] = self._get_pattern_item("Latency 99th percentile.+:(.+)\[.+\]", content).replace(",","")
+        output["latency_999th"] = self._get_pattern_item("Latency 99.9th percentile.+:(.+)\[.+\]", content).replace(",","")
+        output["latency_max"] = self._get_pattern_item("Latency max.+:(.+)\[.+\]", content).replace(",", "")
+        return output
 
     def _get_pattern_item(self, pattern, content):
         match=re.findall(pattern, content, re.MULTILINE)
