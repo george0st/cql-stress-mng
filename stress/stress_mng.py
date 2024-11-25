@@ -1,12 +1,12 @@
-import click
-import datetime, time
-from os import path
-from colorama import Fore, Style
-from glob import glob
-import cql_helper as helper
 from cql_access import CQLAccess
 from cql_config import CQLConfig
 from cql_output import CQLOutput
+from colorama import Fore, Style
+import cql_helper as helper
+from glob import glob
+import datetime, time
+from os import path
+import click
 import re
 
 

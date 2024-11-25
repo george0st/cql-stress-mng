@@ -1,8 +1,6 @@
-#import os.path
-import datetime
+from os import path, makedirs, linesep
 from datetime import datetime
-import os
-from os import path, makedirs
+import datetime
 import platform
 
 
@@ -13,7 +11,7 @@ class CQLOutput:
         self._output_file = output_file
         self._mode=mode
         self._file = None
-        self._newLine="\n" if platform.system().lower()=="windows" else os.linesep
+        self._newLine="\n" if platform.system().lower()=="windows" else linesep
 
     def open(self):
         if self._output_file is not None:
@@ -49,7 +47,8 @@ class CQLOutput:
     def print_header(self):
         self.print("#!/bin/sh")
         self.print("# GENERATED: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        self.print(f'curr_date=$(date +%Y-%m-%d_%H-%M-%S)')
+        self.print("curr_date=$(date +%Y-%m-%d_%H-%M-%S)")
+        self.print("mkdir -p ./stress-output/$curr_date/")
 
     def print_footer(self):
         pass

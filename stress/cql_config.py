@@ -1,5 +1,5 @@
-from os import path
 from dotenv import dotenv_values
+from os import path
 import cql_helper
 
 
