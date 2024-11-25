@@ -1,6 +1,7 @@
 from cql_access import CQLAccess
 from cql_config import CQLConfig
 from cql_output import CQLOutput
+from stress_summary import StressSummary
 from colorama import Fore, Style
 import cql_helper as helper
 from glob import glob
@@ -15,7 +16,7 @@ def get_template(template_path, perf_dir = "."):
     template =""
     if not template_path.lower().endswith(".txt"):
         template_path += ".txt"
-    template_list = helper.read_file_whole(path.join(perf_dir, "config", template_path))
+    template_list = helper.read_file_lines(path.join(perf_dir, "config", template_path))
     for itm in template_list:
         template += f"{itm.strip()} "
     template = template[:-1]
@@ -248,6 +249,17 @@ def version():
     print(table)
 
 @click.group()
+def summary_group():
+    pass
+
+@summary_group.command()
+@click.option("-d", "--dir", help="directory with particular items (default './stress_output/')", default="./stress_output/")
+def summary(dir):
+    """Run performance tests based on ENV file(s)."""
+    summary=StressSummary(dir)
+    summary.parse()
+
+@click.group()
 def run_group():
     pass
 
@@ -259,7 +271,7 @@ def run(env, perf_dir, log):
     """Run performance tests based on ENV file(s)."""
     main_execute(env, perf_dir, log)
 
-cli = click.CommandCollection(sources=[run_group, remove_group, version_group])
+cli = click.CommandCollection(sources=[run_group, remove_group, summary_group, version_group])
 
 if __name__ == '__main__':
     cli()
