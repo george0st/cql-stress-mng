@@ -1,6 +1,5 @@
 from os import path, makedirs, linesep
 from datetime import datetime
-import datetime
 import platform
 
 
@@ -46,7 +45,7 @@ class CQLOutput:
 
     def print_header(self):
         self.print("#!/bin/sh")
-        self.print("# GENERATED: "+datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        self.print("# GENERATED: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         self.print("curr_date=$(date +%Y-%m-%d_%H-%M-%S)")
         self.print("mkdir -p ./stress-output/$curr_date/")
 
