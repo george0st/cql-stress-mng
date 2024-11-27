@@ -1,6 +1,6 @@
 %CMD% %OPERATION% duration=%DURATION% cl=%CL% no-warmup
 -node %IP%
--mode user=%USER% password=%PWD% prepared protocolVersion=%PROTOCOL% connectionsPerHost=64 maxPending=192
+-mode user=%USER% password=%PWD% prepared protocolVersion=%PROTOCOL% connectionsPerHost=%HOSTS% maxPending=%MAXPENDING%
 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=UnifiedCompactionStrategy,scaling_parameters=8)"
 -rate threads=%THREAD%
 -reporting output-frequency=5s > "%OUTPUT%"

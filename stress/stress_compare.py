@@ -8,13 +8,18 @@ class StressCompare:
         The outputs are in json, txt format
     """
 
-    FILTER_LOW = ["Performance", "Avrg"]
-    FILTER_MEDIUM = ["Performance", "Avrg", "Latency 95th", "Latency 99th", "Latency 999th"]
+    COLUMNS_LOW = ["Performance", "Avrg"]
+    COLUMNS_MEDIUM = ["Performance", "Avrg", "Latency 95th", "Latency 99th"]
+    COLUMNS_HIGH = ["Performance", "Avrg", "Latency 95th", "Latency 99th", "Latency 999th", "Max"]
 
-    def __init__(self, path, filter: list[str]=FILTER_LOW):
+    EXECUTORS_LOW = [4, 8, 16, 32, 64, 128]
+    EXECUTORS_HIGH = [4, 8, 16, 32, 64, 128, 256, 512]
+
+    def __init__(self, path, executors: list[int]=EXECUTORS_LOW, columns: list[str]=COLUMNS_LOW):
         self._path=path
         self._items=[]
-        self._filter=filter
+        self._executors=executors
+        self._columns=columns
 
     def add_file_set(self, old_label, old_file, new_label, new_file):
         self._items.append((old_label, old_file, new_label, new_file))
@@ -46,8 +51,8 @@ class StressCompare:
                 for row in new.rows():
                     new_executors += f"{row[index]}\t"
 
-            for filter_itm in self._filter:
-                if new.columns[index] == filter_itm:
+            for column in self._columns:
+                if new.columns[index] == column:
                     for row in new.rows():
                         new_row += f"{row[index]}\t"
 
@@ -63,8 +68,8 @@ class StressCompare:
                 for row in old.rows():
                     old_executors+=f"{row[index]}\t"
 
-            for filter_itm in self._filter:
-                if old.columns[index] == filter_itm:
+            for column in self._columns:
+                if old.columns[index] == column:
                     for row in old.rows():
                         new_row += f"{row[index]}\t"
 
@@ -74,7 +79,7 @@ class StressCompare:
 
         if old_executors != new_executors:
             print("!!! DIFFERENT EXECUTORS !!!!")
-        return new_row.replace(".",","), new_executors
+        return new_row.replace(".",",").replace(" ms",""), new_executors
 
     def run(self):
 
@@ -97,7 +102,7 @@ class StressCompare:
 
         # create header
         header=f"Test case\t"
-        for i in range(len(self._filter)):
+        for i in range(len(self._columns)):
             header += f"{executors}\t"
         header = header [:-1]
 

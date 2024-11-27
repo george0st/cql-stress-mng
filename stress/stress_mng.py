@@ -264,16 +264,13 @@ def summary(dir):
     summary.save_csv()
     aa = StressCompare(dir)
 
-
-    aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
-                    "v5 write_LOCAL_ONE_STCS", "*v5 write_LOCAL_ONE_STCS.csv")
-    aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
-                    "v5 read_LOCAL_ONE_LCS", "*v5 read_LOCAL_ONE_LCS.csv")
-
     # STCS - heavy write, LCS - read heavy
     # L - read heavy, T - write heavy
 
     # extra tests for WRITE (compare with STCS)
+    aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
+                    "v5 write_LOCAL_ONE_STCS", "*v5 write_LOCAL_ONE_STCS.csv")
+
     aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
                     "v5 write_LOCAL_ONE_UCS2", "*v5 write_LOCAL_ONE_UCS2.csv")
 
@@ -287,6 +284,9 @@ def summary(dir):
                     "v5 write_LOCAL_ONE_UCS10", "*v5 write_LOCAL_ONE_UCS10.csv")
 
     # extra tests for READ (compare with LCS)
+    aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
+                    "v5 read_LOCAL_ONE_LCS", "*v5 read_LOCAL_ONE_LCS.csv")
+
     aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
                     "v5 read_LOCAL_ONE_UCS2", "*v5 read_LOCAL_ONE_UCS2.csv")
 
