@@ -281,6 +281,9 @@ def summary(dir):
                     "v5 write_LOCAL_ONE_UCS4", "*v5 write_LOCAL_ONE_UCS4.csv")
 
     aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
+                    "v5 write_LOCAL_ONE_UCS8", "*v5 write_LOCAL_ONE_UCS8.csv")
+
+    aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
                     "v5 write_LOCAL_ONE_UCS10", "*v5 write_LOCAL_ONE_UCS10.csv")
 
     # extra tests for READ (compare with LCS)
@@ -289,6 +292,9 @@ def summary(dir):
 
     aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
                     "v5 read_LOCAL_ONE_UCS4", "*v5 read_LOCAL_ONE_UCS4.csv")
+
+    aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
+                    "v5 read_LOCAL_ONE_UCS8", "*v5 read_LOCAL_ONE_UCS8.csv")
 
     aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
                     "v5 read_LOCAL_ONE_UCS10", "*v5 read_LOCAL_ONE_UCS10.csv")
