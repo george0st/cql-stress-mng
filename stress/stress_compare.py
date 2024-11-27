@@ -33,36 +33,48 @@ class StressCompare:
 
         # V5
         new_row += f"{new_label}\t"
-        for perf in new.items():
-            if perf[0]=="Executors":
-                for item in perf[1]:
-                    new_executors+=f"{item}\t"
-
-            if perf[0]=="Performance 99ph":
-                for item in perf[1]:
-                    new_row+=f"{item}\t"
-
-            if perf[0] == "Avrg 99ph":
-                for item in perf[1]:
-                    new_row += f"{item}\t"
+        for index in range(len(new.columns)):
+            if new.columns[index]=="Executors":
+                for row in new.rows():
+                    new_executors+=f"{row[index]}\t"
+            if new.columns[index]=="Performance":
+                for row in new.rows():
+                    new_row+=f"{row[index]}\t"
+            if new.columns[index]=="Avrg":
+                for row in new.rows():
+                    new_row += f"{row[index]}\t"
+            if new.columns[index] == "Latency 95th":
+                for row in new.rows():
+                    new_row += f"{row[index]}\t"
+            if new.columns[index] == "Latency 99th":
+                for row in new.rows():
+                    new_row += f"{row[index]}\t"
         new_executors = new_executors[:-1]
         new_row = new_row[:-1]
         new_row += "\n"
 
         # V4
         new_row += f"{old_label}\t"
-        for perf in old.items():
-            if perf[0]=="Executors":
-                for item in perf[1]:
-                    old_executors+=f"{item}\t"
+        for index in range(len(old.columns)):
+            if old.columns[index]=="Executors":
+                for row in old.rows():
+                    old_executors+=f"{row[index]}\t"
 
-            if perf[0]=="Performance 99ph":
-                for item in perf[1]:
-                    new_row+=f"{item}\t"
+            if old.columns[index]=="Performance":
+                for row in old.rows():
+                    new_row+=f"{row[index]}\t"
 
-            if perf[0] == "Avrg 99ph":
-                for item in perf[1]:
-                    new_row += f"{item}\t"
+            if old.columns[index] == "Avrg":
+                for row in old.rows():
+                    new_row += f"{row[index]}\t"
+
+            if old.columns[index] == "Latency 95th":
+                for row in old.rows():
+                    new_row += f"{row[index]}\t"
+
+            if old.columns[index] == "Latency 99th":
+                for row in old.rows():
+                    new_row += f"{row[index]}\t"
 
         old_executors = old_executors[:-1]
         new_row = new_row[:-1]
@@ -90,7 +102,7 @@ class StressCompare:
             if executors!=final_executors:
                 print("!!! DIFFERENT EXECUTORS !!!!")
 
-        print(f"Test case\t{executors}\t{executors}")
+        print(f"Test case\t{executors}\t{executors}\t{executors}\t{executors}")
         print(final_output)
 
 

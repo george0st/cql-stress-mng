@@ -2,6 +2,7 @@ from cql_access import CQLAccess
 from cql_config import CQLConfig
 from cql_output import CQLOutput
 from stress_summary import StressSummary
+from stress_compare import StressCompare
 from colorama import Fore, Style
 import cql_helper as helper
 from glob import glob
@@ -230,6 +231,7 @@ def version_group():
 def version():
     """Versions of key components."""
     from cassandra import __version__ as cassandra_version
+    from polars import __version__ as polars_verion
     from prettytable import PrettyTable
     import version
     import sys
@@ -244,6 +246,7 @@ def version():
     table.align = "l"
 
     table.add_row([Fore.LIGHTRED_EX + "stress"+ Style.RESET_ALL, Fore.LIGHTRED_EX + version.__version__+Style.RESET_ALL])
+    table.add_row(["polars", polars_verion])
     table.add_row(["cassandra-driver", cassandra_version])
     table.add_row(["python", sys.version])
     print(table)
@@ -259,8 +262,38 @@ def summary(dir):
     summary=StressSummary(dir)
     summary.parse()
     summary.save_csv()
+    aa = StressCompare(dir)
 
 
+    aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
+                    "v5 write_LOCAL_ONE_STCS", "*v5 write_LOCAL_ONE_STCS.csv")
+    aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
+                    "v5 read_LOCAL_ONE_LCS", "*v5 read_LOCAL_ONE_LCS.csv")
+
+    # STCS - heavy write, LCS - read heavy
+    # L - read heavy, T - write heavy
+
+    # extra tests for WRITE (compare with STCS)
+    aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
+                    "v5 write_LOCAL_ONE_UCS2", "*v5 write_LOCAL_ONE_UCS2.csv")
+
+    aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
+                    "v5 write_LOCAL_ONE_UCS4", "*v5 write_LOCAL_ONE_UCS4.csv")
+
+    aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
+                    "v5 write_LOCAL_ONE_UCS10", "*v5 write_LOCAL_ONE_UCS10.csv")
+
+    # extra tests for READ (compare with LCS)
+    aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
+                    "v5 read_LOCAL_ONE_UCS2", "*v5 read_LOCAL_ONE_UCS2.csv")
+
+    aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
+                    "v5 read_LOCAL_ONE_UCS4", "*v5 read_LOCAL_ONE_UCS4.csv")
+
+    aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
+                    "v5 read_LOCAL_ONE_UCS10", "*v5 read_LOCAL_ONE_UCS10.csv")
+
+    aa.run()
 
 @click.group()
 def run_group():
