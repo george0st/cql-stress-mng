@@ -1,10 +1,11 @@
 # To-Do list
 
-0. Add INIT step, before the run
-   - create dir + remove keyspace??
-   - RUN step from 1 (not from 0)
 
 1. use for all run variable without relation to previous RUN
    - see stress_test
 
 2. Parse perf outputs
+
+3. Possibility to not count RUN
+   - count only script without remove_keyspace
+   - repair not used variables, relation to point 1.
