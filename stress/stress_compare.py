@@ -12,13 +12,13 @@ class StressCompare:
     COLUMNS_MEDIUM = ["Performance", "Avrg", "Latency 95th", "Latency 99th"]
     COLUMNS_HIGH = ["Performance", "Avrg", "Latency 95th", "Latency 99th", "Latency 999th", "Max"]
 
-    EXECUTORS_LOW = [4, 8, 16, 32, 64, 128]
-    EXECUTORS_HIGH = [4, 8, 16, 32, 64, 128, 256, 512]
+    #EXECUTORS_LOW = [4, 8, 16, 32, 64, 128]
+    #EXECUTORS_HIGH = [4, 8, 16, 32, 64, 128, 256, 512]
 
-    def __init__(self, path, executors: list[int]=EXECUTORS_LOW, columns: list[str]=COLUMNS_LOW):
+    def __init__(self, path, columns: list[str]=COLUMNS_LOW):
         self._path=path
         self._items=[]
-        self._executors=executors
+        #self._executors=executors
         self._columns=columns
 
     def add_file_set(self, old_label, old_file, new_label, new_file):
