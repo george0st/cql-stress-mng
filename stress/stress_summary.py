@@ -49,6 +49,9 @@ class StressSummary:
     def _json_format(self, performance: dict):
         pass
 
+    def _sort_executors(self, e):
+        return e['executors']
+
     def parse(self):
 
         performance = {}
@@ -61,16 +64,16 @@ class StressSummary:
             # file_name = "2024-11-25_22-02-41 v5 read_LOCAL_ONE_UCS10_32xTHR.txt"
             # key = 2024-11-25_22-02-41 v5 read_LOCAL_ONE_UCS10
 
-            # update items
+            # collect items
             if performance.get(key, None):
                 performance[key].append(one_output)
             else:
-                items=[]
-                items.append(one_output)
-                performance[key]=items
-
+                #items=[one_output]
+                #items.append(one_output)
+                performance[key]=[one_output]
 
         # order by amount of executors
+        for key in performance.keys():
+            performance[key].sort(key=self._sort_executors)
 
-        # output JSON for qgate-graph
-
+        return performance
