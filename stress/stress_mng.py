@@ -258,6 +258,7 @@ def summary(dir):
     """Run performance tests based on ENV file(s)."""
     summary=StressSummary(dir)
     summary.parse()
+    summary.save_csv()
 
 @click.group()
 def run_group():
