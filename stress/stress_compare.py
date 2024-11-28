@@ -109,11 +109,41 @@ class StressCompare:
         print(header)
         print(final_output)
 
+    def add_default(self, consistency_level="LOCAL_ONE"):
+
+        # STCS - heavy write, LCS - read heavy
+        # L - read heavy, T - write heavy
+
+        # extra tests for WRITE (compare with STCS)
+        self.add_file_set(f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS.csv",
+                        f"v5 write_{consistency_level}_STCS", f"*v5 write_{consistency_level}_STCS.csv")
+
+        self.add_file_set(f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS.csv",
+                        f"v5 write_{consistency_level}_UCS2", f"*v5 write_{consistency_level}_UCS2.csv")
+
+        self.add_file_set(f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS.csv",
+                        f"v5 write_{consistency_level}_UCS4", f"*v5 write_{consistency_level}_UCS4.csv")
+
+        self.add_file_set(f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS.csv",
+                        f"v5 write_{consistency_level}_UCS8", f"*v5 write_{consistency_level}_UCS8.csv")
+
+        self.add_file_set(f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS.csv",
+                        f"v5 write_{consistency_level}_UCS10", f"*v5 write_{consistency_level}_UCS10.csv")
+
+        # extra tests for READ (compare with LCS)
+        self.add_file_set(f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS.csv",
+                        f"v5 read_{consistency_level}_LCS", f"*v5 read_{consistency_level}_LCS.csv")
+
+        self.add_file_set(f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS.csv",
+                        f"v5 read_{consistency_level}_UCS2", f"*v5 read_{consistency_level}_UCS2.csv")
+
+        self.add_file_set(f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS.csv",
+                        f"v5 read_{consistency_level}_UCS4", f"*v5 read_{consistency_level}_UCS4.csv")
+
+        self.add_file_set(f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS.csv",
+                        f"v5 read_{consistency_level}_UCS8", f"*v5 read_{consistency_level}_UCS8.csv")
+
+        self.add_file_set(f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS.csv",
+                        f"v5 read_{consistency_level}_UCS10", f"*v5 read_{consistency_level}_UCS10.csv")
 
 
-#     aa = Merge("c:/Python/.Compare V4 vs V5/LONG_DATA/NEW ALL/output/graph-perf/1 min/2024-11-21/")
-# #    aa = Merge("c:/Python/.Compare V4 vs V5/LONG_DATA/NEW LOCAL QUORUM/output/graph-perf/1 min/2024-11-21/")
-# #    aa = Merge("c:/Python/.Compare V4 vs V5/LONG_DATA/NEW LOCAL ONE/output/graph-perf/1 min/2024-11-20/")
-#
-#     aa.add_file_set("TC01-Write-STCS-v4", "*cassandrav4-*-W-TC01-*.csv",
-#                     "TC01-Write-STCS-v5", "*cassandrav5-*-W-TC01-*.csv")
