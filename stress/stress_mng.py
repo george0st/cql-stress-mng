@@ -262,44 +262,12 @@ def summary(dir):
     summary=StressSummary(dir)
     summary.parse()
     summary.save_csv()
-    aa = StressCompare(dir)
-
-    # STCS - heavy write, LCS - read heavy
-    # L - read heavy, T - write heavy
-
-    # extra tests for WRITE (compare with STCS)
-    aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
-                    "v5 write_LOCAL_ONE_STCS", "*v5 write_LOCAL_ONE_STCS.csv")
-
-    aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
-                    "v5 write_LOCAL_ONE_UCS2", "*v5 write_LOCAL_ONE_UCS2.csv")
-
-    aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
-                    "v5 write_LOCAL_ONE_UCS4", "*v5 write_LOCAL_ONE_UCS4.csv")
-
-    aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
-                    "v5 write_LOCAL_ONE_UCS8", "*v5 write_LOCAL_ONE_UCS8.csv")
-
-    aa.add_file_set("v4 write_LOCAL_ONE_STCS", "*v4 write_LOCAL_ONE_STCS.csv",
-                    "v5 write_LOCAL_ONE_UCS10", "*v5 write_LOCAL_ONE_UCS10.csv")
-
-    # extra tests for READ (compare with LCS)
-    aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
-                    "v5 read_LOCAL_ONE_LCS", "*v5 read_LOCAL_ONE_LCS.csv")
-
-    aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
-                    "v5 read_LOCAL_ONE_UCS2", "*v5 read_LOCAL_ONE_UCS2.csv")
-
-    aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
-                    "v5 read_LOCAL_ONE_UCS4", "*v5 read_LOCAL_ONE_UCS4.csv")
-
-    aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
-                    "v5 read_LOCAL_ONE_UCS8", "*v5 read_LOCAL_ONE_UCS8.csv")
-
-    aa.add_file_set("v4 read_LOCAL_ONE_LCS", "*v4 read_LOCAL_ONE_LCS.csv",
-                    "v5 read_LOCAL_ONE_UCS10", "*v5 read_LOCAL_ONE_UCS10.csv")
-
-    aa.run()
+    comp = StressCompare(dir)
+    comp.run_default("LOCAL_ONE")
+    comp.save()
+    print("==============================")
+    comp.run_default("LOCAL_QUORUM")
+    comp.save()
 
 @click.group()
 def run_group():
