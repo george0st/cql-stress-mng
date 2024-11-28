@@ -264,8 +264,10 @@ def summary(dir):
     summary.save_csv()
     comp = StressCompare(dir)
     comp.run_default("LOCAL_ONE")
+    comp.save()
     print("==============================")
     comp.run_default("LOCAL_QUORUM")
+    comp.save()
 
 @click.group()
 def run_group():
