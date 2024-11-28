@@ -1,5 +1,5 @@
 #!/bin/sh
-# GENERATED: 2024-11-28 10:11:48
+# GENERATED: 2024-11-28 10:51:43
 curr_date=$(date +%Y-%m-%d_%H-%M-%S)
 mkdir -p ./stress-output/$curr_date/
 echo 'Based on: .\config\_cass_v4_1_local_one.env'
