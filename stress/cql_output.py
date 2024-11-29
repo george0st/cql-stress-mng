@@ -5,9 +5,10 @@ import platform
 
 class CQLOutput:
 
-    def __init__(self, perf_dir, output_file = None, mode = "wt"):
+    def __init__(self, perf_dir, output_file = None, output_screen = True, mode = "wt"):
         self._perf_dir = perf_dir
         self._output_file = output_file
+        self._output_screen = output_screen
         self._mode=mode
         self._file = None
         self._newLine="\n" if platform.system().lower()=="windows" else linesep
@@ -31,7 +32,9 @@ class CQLOutput:
         # print to the file 'out'
         if self._file is not None:
             self._file.write(f"{out}{self._newLine}")
-        print(out)
+
+        if self._output_screen:
+            print(out)
 
     def print_cmd(self, cmd, global_counter, run_value_index, params:dict):
 
