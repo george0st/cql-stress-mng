@@ -118,7 +118,7 @@ def create_variables(params: dict, run_variable: dict):
 
     return new_variables
 
-def internal_command(line: str, params, simulation: bool = False, sleep = 5):
+def internal_command(line: str, params, simulation: bool = False):
 
     cql = None
     cmd_params = line.split(",")
@@ -132,7 +132,6 @@ def internal_command(line: str, params, simulation: bool = False, sleep = 5):
         finally:
             if cql:
                 cql.close()
-        time.sleep(sleep)
 
 def stress_test(output: CQLOutput, params: dict, perf_dir = ".", counter=0):
 
@@ -194,7 +193,8 @@ def main_execute(env="_cass*.env", perf_dir = ".", log=""):
         output.open()
         output.print_header()
 
-        for file in glob(path.join(perf_dir, "config", env)):
+        filter=path.join(perf_dir, "config", env)
+        for file in glob(filter):
 
             output.print(f"echo 'Based on: {file}'")
             global_params = CQLConfig(perf_dir).get_global_params(file)
@@ -220,8 +220,12 @@ def remove_group():
 def remove(env, perf_dir, keyspace, sleep):
     for file in glob(path.join(perf_dir, "config", env)):
         params = CQLConfig(perf_dir).get_global_params(file)
-        internal_command(f"#REMOVE_KEYSPACE,{keyspace}", params, False, int(sleep))
+        internal_command(f"#REMOVE_KEYSPACE,{keyspace}", params, False)
+        print(f"Removed keyspace: '{keyspace}' (ENV: '{file}')")
+        print(f"Sleep {sleep} seconds ...")
+        time.sleep(int(sleep))
         break
+
 
 @click.group()
 def version_group():
