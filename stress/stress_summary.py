@@ -84,7 +84,7 @@ class StressSummary:
 
     def _multi_result(self, content) -> bool:
         summary_items=self._get_pattern_items(f"(.*)threadCount, total,([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*)", content)
-        return len(summary_items)>0
+        return len(summary_items)>0 if summary_items else False
 
     def _parse_content(self, file_name, content) -> (str,dict):
 
