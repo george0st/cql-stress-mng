@@ -43,7 +43,8 @@ class CQLOutput:
         if operation.lower()!='remove':
             self.print(f"echo 'START {params['OPERATION']}, {thread}x thread: {global_counter}/{run_value_index}...'")
         else:
-            self.print(f"echo 'START {params['OPERATION']}: {global_counter}/{run_value_index}...'")
+            #self.print(f"echo 'START {params['OPERATION']}: {global_counter}/{run_value_index}...'")
+            self.print(f"echo 'START {params['OPERATION']}: ...'")
         self.print(cmd)
 
     def print_header(self):

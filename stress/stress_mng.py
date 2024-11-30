@@ -161,11 +161,12 @@ def stress_test(output: CQLOutput, params: dict, perf_dir = ".", counter=0):
                 if cmd_variable.get(variable, None):
                     cmd = cmd.replace(f"%{variable}%", cmd_variable[variable])
 
-            counter+=1
+            if cmd_variable["OPERATION"].lower()!="remove":
+                counter+=1
             output.print_cmd(cmd, counter, 1, cmd_variable)
         else:
             # create command
-            run_value_index=1
+            run_value_index=0
             for combination in range(len(run_variable_values)):
 
                 cmd_variable = create_variables(params, run_variable_values[combination])
@@ -176,9 +177,11 @@ def stress_test(output: CQLOutput, params: dict, perf_dir = ".", counter=0):
                     if cmd_variable.get(variable, None):
                         cmd = cmd.replace(f"%{variable}%", cmd_variable[variable])
 
-                counter += 1
+                if cmd_variable["OPERATION"].lower() != "remove":
+                    counter += 1
+                    run_value_index += 1
+
                 output.print_cmd(cmd, counter, run_value_index, cmd_variable)
-                run_value_index += 1
         output.print()
     return counter
 
@@ -225,7 +228,6 @@ def remove(env, perf_dir, keyspace, sleep):
         print(f"Sleep {sleep} seconds ...")
         time.sleep(int(sleep))
         break
-
 
 @click.group()
 def version_group():
