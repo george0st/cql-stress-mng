@@ -2,5 +2,5 @@
 -node %IP%
 -mode user=%USER% password=%PWD% prepared protocolVersion=%PROTOCOL% connectionsPerHost=%HOSTS% maxPending=%MAXPENDING%
 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=LeveledCompactionStrategy,sstable_size_in_mb=160,fanout_size=10)"
--rate threads=%THREAD%
+-rate "%THREAD_CMP%%THREAD%"
 -reporting output-frequency=5s > "%OUTPUT%"

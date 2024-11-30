@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="run v5" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="SEQUENCE - run v4 " type="PythonConfigurationType" factoryName="Python" folderName="sequence THR">
     <module name="cql-stress-mng" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
@@ -14,7 +14,7 @@
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/stress/stress_mng.py" />
-    <option name="PARAMETERS" value="run -e _cass_v5_*.env -l stress-cmd/_cass_v5.sh" />
+    <option name="PARAMETERS" value="run -e compareV4V5_sequenceTHR\_cass_v4_*.env -l stress-cmd/_cass_v4.sh" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />
