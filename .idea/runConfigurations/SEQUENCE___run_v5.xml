@@ -14,7 +14,7 @@
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/stress/stress_mng.py" />
-    <option name="PARAMETERS" value="run -e compareV4V5_sequenceTHR\_cass_v5_*.env -l stress-cmd/_cass_v5.sh" />
+    <option name="PARAMETERS" value="run -e compareV4V5_sequenceTHR\_cass_v5_*.env -l stress-cmd/_cass_seq_v5.sh" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />
