@@ -21,8 +21,8 @@ class StressCompare:
         #self._executors=executors
         self._columns=columns
 
-    def add_file_set(self, old_label, old_file, new_label, new_file):
-        self._items.append((old_label, old_file, new_label, new_file))
+    def add_file_set(self, old_label, old_file, new_label, new_file, optional = False):
+        self._items.append((old_label, old_file, new_label, new_file, optional))
 
     def _run_item(self, old_label, old_file_name, new_label, new_file_name):
         new_file = None
@@ -89,6 +89,7 @@ class StressCompare:
         final_executors=""
 
         for item_set in self._items:
+            optional = item_set[4]
             output, executors =self._run_item(item_set[0], item_set[1], item_set[2], item_set[3])
 
             if output:
@@ -98,7 +99,10 @@ class StressCompare:
                 final_output += output+"\r\n"
 
                 if executors!=final_executors:
-                    print("!!! DIFFERENT EXECUTORS !!!!")
+                    print("!!! DIFFERENT EXECUTORS !!!")
+            else:
+                if not optional:
+                    print(f"!!! Missing '{item_set[0]}' & '{item_set[2]}' !!!")
 
         # create header
         header=f"Test case\t"
@@ -119,8 +123,9 @@ class StressCompare:
         self.add_file_set(f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS.csv",
                         f"v5 write_{consistency_level}_STCS", f"*v5 write_{consistency_level}_STCS.csv")
 
+        # optional compare
         self.add_file_set(f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS.csv",
-                        f"v5 write_{consistency_level}_UCS2", f"*v5 write_{consistency_level}_UCS2.csv")
+                        f"v5 write_{consistency_level}_UCS2", f"*v5 write_{consistency_level}_UCS2.csv", True)
 
         self.add_file_set(f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS.csv",
                         f"v5 write_{consistency_level}_UCS4", f"*v5 write_{consistency_level}_UCS4.csv")
@@ -135,8 +140,9 @@ class StressCompare:
         self.add_file_set(f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS.csv",
                         f"v5 read_{consistency_level}_LCS", f"*v5 read_{consistency_level}_LCS.csv")
 
+        # optional compare
         self.add_file_set(f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS.csv",
-                        f"v5 read_{consistency_level}_UCS2", f"*v5 read_{consistency_level}_UCS2.csv")
+                        f"v5 read_{consistency_level}_UCS2", f"*v5 read_{consistency_level}_UCS2.csv", True)
 
         self.add_file_set(f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS.csv",
                         f"v5 read_{consistency_level}_UCS4", f"*v5 read_{consistency_level}_UCS4.csv")
