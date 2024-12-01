@@ -118,20 +118,29 @@ def create_variables(params: dict, run_variable: dict):
 
     return new_variables
 
-def internal_command(line: str, params, simulation: bool = False):
+def remove_keyspace(keyspace: str, params, simulation: bool = False):
 
     cql = None
-    cmd_params = line.split(",")
-    command=cmd_params[0].strip()
-    if command == "#REMOVE_KEYSPACE":
-        try:
-            if not simulation:
-                cql = CQLAccess(params)
-                cql.open()
-                cql.remove_keyspace(cmd_params[1].strip())
-        finally:
-            if cql:
-                cql.close()
+    try:
+        if not simulation:
+            cql = CQLAccess(params)
+            cql.open()
+            cql.remove_keyspace(keyspace)
+    finally:
+        if cql:
+            cql.close()
+
+def remove_table(keyspace: str, table: str, params, simulation: bool = False):
+
+    cql = None
+    try:
+        if not simulation:
+            cql = CQLAccess(params)
+            cql.open()
+            cql.remove_table(keyspace, table)
+    finally:
+        if cql:
+            cql.close()
 
 def stress_test(output: CQLOutput, params: dict, perf_dir = ".", counter=0):
 
@@ -226,10 +235,11 @@ def remove(env, perf_dir, keyspace, table, sleep):
         params = CQLConfig(perf_dir).get_global_params(file)
 
         if table and len(table)>0:
-            internal_command(f"#REMOVE_TABLE,{keyspace}.{table}", params, False)
+            remove_table(keyspace, table, params, False)
+            print(f"Removed table: '{keyspace}.{table}' (ENV: '{file}')")
         else:
-            internal_command(f"#REMOVE_KEYSPACE,{keyspace}", params, False)
-        print(f"Removed keyspace: '{keyspace}' (ENV: '{file}')")
+            remove_keyspace(keyspace, params, False)
+            print(f"Removed keyspace: '{keyspace}' (ENV: '{file}')")
         print(f"Sleep {sleep} seconds ...")
         time.sleep(int(sleep))
         break

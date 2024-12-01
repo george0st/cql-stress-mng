@@ -83,6 +83,18 @@ class CQLAccess:
             if session:
                 session.shutdown()
 
+    def remove_table(self, keyspace: str, table: str):
+        session = None
+
+        try:
+            session = self.create_session(Setting.TIMEOUT_CREATE_MODEL)
+            session.execute(f"DROP TABLE IF EXISTS {keyspace}.{table};")
+        except Exception as ex:
+            print(Fore.LIGHTRED_EX + f"    {type(ex).__name__}: {str(ex)}" + Style.RESET_ALL)
+        finally:
+            if session:
+                session.shutdown()
+
     def create_model(self):
         """Create new NoSQL model (create keyspace and table)"""
         if not self._run_setup["model_rebuild"]:
