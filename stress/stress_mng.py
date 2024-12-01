@@ -219,11 +219,16 @@ def remove_group():
 @click.option("-e", "--env", help="name of ENV file (default '_cass.env')", default="_cass.env")
 @click.option("-d", "--perf_dir", help="directory with perf_cql (default '.')", default=".")
 @click.option("-k", "--keyspace", help="remove keyspace", default="")
+@click.option("-t", "--table", help="remove table in specific keyspace (if table is empty, that remove whole keyspace)", default="")
 @click.option("-s", "--sleep", help="sleep time in seconds", default="5")
-def remove(env, perf_dir, keyspace, sleep):
+def remove(env, perf_dir, keyspace, table, sleep):
     for file in glob(path.join(perf_dir, "config", env)):
         params = CQLConfig(perf_dir).get_global_params(file)
-        internal_command(f"#REMOVE_KEYSPACE,{keyspace}", params, False)
+
+        if table and len(table)>0:
+            internal_command(f"#REMOVE_TABLE,{keyspace}.{table}", params, False)
+        else:
+            internal_command(f"#REMOVE_KEYSPACE,{keyspace}", params, False)
         print(f"Removed keyspace: '{keyspace}' (ENV: '{file}')")
         print(f"Sleep {sleep} seconds ...")
         time.sleep(int(sleep))
@@ -290,37 +295,3 @@ cli = click.CommandCollection(sources=[run_group, remove_group, summary_group, v
 if __name__ == '__main__':
     cli()
 
-# import subprocess
-#
-# import re
-
-# # Otevřete log soubor
-# with open('stress_output.log', 'r') as file:
-#     log_data = file.read()
-#
-# # Regulární výraz pro zachycení relevantních metrik
-# pattern = re.compile(r'total ops\s+:\s+(\d+)\s+\[WRITE:(\d+)\]\n'
-#                      r'partition rate\s+:\s+(\d+)\s+\[WRITE:(\d+)\]\n'
-#                      r'row rate\s+:\s+(\d+)\s+\[WRITE:(\d+)\]\n'
-#                      r'latency mean\s+:\s+(\d+\.\d+)\s+\[WRITE:(\d+\.\d+)\]\n'
-#                      r'latency median\s+:\s+(\d+\.\d+)\s+\[WRITE:(\d+\.\d+)\]\n'
-#                      r'latency 95th percentile\s+:\s+(\d+\.\d+)\s+\[WRITE:(\d+\.\d+)\]\n'
-#                      r'latency 99th percentile\s+:\s+(\d+\.\d+)\s+\[WRITE:(\d+\.\d+)\]\n'
-#                      r'latency 99.9th percentile\s+:\s+(\d+\.\d+)\s+\[WRITE:(\d+\.\d+)\]\n'
-#                      r'latency max\s+:\s+(\d+\.\d+)\s+\[WRITE:(\d+\.\d+)\]\n'
-#                      r'Total partitions\s+:\s+(\d+)\s+\[WRITE:(\d+)\]\n'
-#                      r'Total errors\s+:\s+(\d+)\s+\[WRITE:(\d+)\]\n')
-#
-# # Vyhledání metrik v log souboru
-# match = pattern.search(log_data)
-# if match:
-#     results = match.groups()
-#     print("Výsledky testu:")
-#     print(f"Celkový počet operací: {results[0]}")
-#     print(f"Počet operací za sekundu: {results[2]}")
-#     print(f"Průměrná latence: {results[6]} ms")
-#     print(f"95. percentil latence: {results[10]} ms")
-#     print(f"Maximální latence: {results[16]} ms")
-#     print(f"Celkový počet chyb: {results[20]}")
-# else:
-#     print("Nepodařilo se najít výsledky v log souboru.")
