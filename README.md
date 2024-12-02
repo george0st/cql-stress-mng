@@ -4,8 +4,9 @@ the solution for tests not only cassandra, but also Scylla and AstraDB.
 
 Key benefits:
  - generation bundle of tests for 'cassandra-stress'
- - support keyspace remove
+ - support keyspace/table remove
  - generate test summaries
+ - compare results 
  - generate graphs
 
 Pre-requisities:
