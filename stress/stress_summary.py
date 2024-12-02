@@ -4,6 +4,7 @@ from glob import glob
 import datetime, time
 from os import path, linesep
 import re
+import json
 
 
 class StressSummary:
@@ -101,7 +102,7 @@ class StressSummary:
         return e['executors']
 
     def parse(self):
-
+        """Parse input"""
         self._performance = {}
         items=[]
         # iteration cross all files
@@ -120,11 +121,8 @@ class StressSummary:
         for key in self._performance.keys():
             self._performance[key].sort(key=self._sort_executors)
 
-    def save_json(self):
-        pass
-
     def save_csv(self):
-
+        """Save summary output to CSV file"""
         for key in self._performance.keys():
             output = None
             try:
@@ -145,4 +143,24 @@ class StressSummary:
                 if output:
                     output.close()
 
+    def save_json(self):
+        """Save summary output to TXT (JSON) file"""
+    ################ 2023-10-15 15:09:20.638004 ###############
+    # {"type": "headr", "label": "test_aus_ger", "bulk": [10, 10], "cpu": 12, "mem": "15.2 GB", "mem_free": "5.5 GB", "host": "HCI-L3204/192.168.0.150", "now": "2023-10-15 15:09:20.638004"}
+    # {"type":"headr","label":"cassandra-163551-W1-low","bulk":[200,10],"duration":60,"percentile":0.95,"cpu":8,"mem":"15.1 GB","mem_free":"12.7 GB","host":"os01-jic76ebbnzgz.cz.infra/10.129.54.56","now":"2024-10-11 14:36:07.799293"}
+    #   {"type": "core",
+        #   "real_executors": 2,
+        #   "group": "Austria perf",
+        #   "total_call_per_sec": 12.882812275236457,
+        #   "avrg_time": 1.5524560610453289,
+        #   "std_deviation": 0.00418030586255807}
+    #   {"type": "core", "plan_executors": 4, "plan_executors_detail": [2, 2], "real_executors": 4, "group": "Austria perf", "total_calls": 12, "total_call_per_sec": 25.8796241474028, "avrg_time": 1.5456175009409585, "std_deviation": 0.007724887210259932, "endexec": "2023-10-15 15:09:39.049110"}
+    #   {"type": "core", "plan_executors": 8, "plan_executors_detail": [4, 2], "real_executors": 8, "group": "Austria perf", "total_calls": 24, "total_call_per_sec": 51.68629474505174, "avrg_time": 1.5477990905443828, "std_deviation": 0.0030063451073294354, "endexec": "2023-10-15 15:09:49.170053"}
+    #   {"type": "core", "plan_executors": 4, "plan_executors_detail": [1, 4], "real_executors": 4, "group": "Germany perf", "total_calls": 12, "total_call_per_sec": 25.74525310264132, "avrg_time": 1.5536844730377197, "std_deviation": 0.004366116211321063, "endexec": "2023-10-15 15:09:58.374092"}
+    #   {"type": "core", "plan_executors": 8, "plan_executors_detail": [2, 4], "real_executors": 8, "group": "Germany perf", "total_calls": 24, "total_call_per_sec": 51.35900922500767, "avrg_time": 1.5576624472935996, "std_deviation": 0.004880468682655263, "endexec": "2023-10-15 15:10:07.503113"}
+    #   {"type": "core", "plan_executors": 16, "plan_executors_detail": [4, 4], "real_executors": 16, "group": "Germany perf", "total_calls": 48, "total_call_per_sec": 103.95169615994652, "avrg_time": 1.5391764243443808, "std_deviation": 0.009352894892740266, "endexec": "2023-10-15 15:10:17.224968"}
+    # ############### State: OK,  Duration: 56.6 seconds ###############
+
+
+        pass
 
