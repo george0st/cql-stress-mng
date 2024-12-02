@@ -181,15 +181,6 @@ class StressSummary:
     #     out[FileMarker.PRF_HDR_HOST] = Helper.get_host()
     #     out[FileMarker.PRF_HDR_NOW] =  self._start_tasks.isoformat(' ')
     #
-    #     readable_out = {}
-    #     readable_out[FileMarker.HR_PRF_HDR_LABEL] = self._label if self._label is not None else "Noname"
-    #     readable_out[FileMarker.PRF_HDR_BULK] = [run_setup._bulk_row, run_setup._bulk_col]
-    #     readable_out[FileMarker.PRF_HDR_DURATION] = run_setup._duration_second
-    #     if run_setup.exist('percentile'):
-    #         readable_out[FileMarker.HR_PRF_HDR_PERCENTILE] = run_setup['percentile']
-    #     readable_out[FileMarker.PRF_HDR_AVIALABLE_CPU] = multiprocessing.cpu_count()
-    #     readable_out[FileMarker.HR_PRF_HDR_MEMORY] = f"{total}/{free}"
-    #
     #     self.print(dumps(out, separators=OutputSetup().json_separator),
     #                 dumps(readable_out, separators = OutputSetup().human_json_separator))
     #
@@ -236,24 +227,6 @@ class StressSummary:
     #         out[FileMarker.PRF_CORE_MIN + suffix] = result.min                                  # ok
     #         out[FileMarker.PRF_CORE_MAX + suffix] = result.max                                  # ok
     #     out[FileMarker.PRF_CORE_TIME_END] = datetime.utcnow().isoformat(' ')
-    #
-    #     # human-readable form
-    #     readable_out = {}
-    #     readable_out[FileMarker.HM_PRF_CORE_PLAN_EXECUTOR_ALL] = f"{processes * threads} [{processes},{threads}]"
-    #     readable_out[FileMarker.HM_PRF_CORE_REAL_EXECUTOR] = percentile_summaries[1].executors # executors
-    #     readable_out[FileMarker.HM_PRF_CORE_GROUP] = group
-    #     for result in percentile_summaries.values():
-    #         suffix = f"_{int(result.percentile * 100)}" if result.percentile < 1 else ""
-    #         readable_out[FileMarker.HM_PRF_CORE_TOTAL_CALL + suffix] = result.count
-    #         if result.call_per_sec_raw == result.call_per_sec:
-    #             call_readable = f"{round(result.call_per_sec_raw, OutputSetup().human_precision)}"
-    #         else:
-    #             call_readable = f"{round(result.call_per_sec_raw, OutputSetup().human_precision)}/{round(result.call_per_sec, OutputSetup().human_precision)}"
-    #         readable_out[FileMarker.HM_PRF_CORE_TOTAL_CALL_PER_SEC + suffix] = call_readable
-    #         readable_out[FileMarker.HM_PRF_CORE_AVRG_TIME + suffix] =  round(result.avrg, OutputSetup().human_precision)
-    #         readable_out[FileMarker.HM_PRF_CORE_STD_DEVIATION + suffix] = round(result.std, OutputSetup().human_precision)
-    #         readable_out[FileMarker.PRF_CORE_MIN + suffix] = round(result.min, OutputSetup().human_precision)
-    #         readable_out[FileMarker.PRF_CORE_MAX + suffix] = round(result.max, OutputSetup().human_precision)
     #
     #     # final dump
     #     self.print(f"  {dumps(out, separators = OutputSetup().json_separator)}",
