@@ -4,7 +4,7 @@ from glob import glob
 import datetime, time
 from os import path, linesep
 import re
-import json
+from json import dumps
 
 
 class StressSummary:
@@ -164,3 +164,99 @@ class StressSummary:
 
         pass
 
+    # def print_header(self, run_setup: RunSetup=None):
+    #     self._start_tasks = datetime.utcnow()
+    #     self.print(f"############### {self._start_tasks.isoformat(' ')} ###############")
+    #     total, free = Helper.get_memory()
+    #     out = {}
+    #     out[FileMarker.PRF_TYPE] = FileMarker.PRF_HDR_TYPE
+    #     out[FileMarker.PRF_HDR_LABEL] = self._label if self._label is not None else "Noname"
+    #     out[FileMarker.PRF_HDR_BULK] = [run_setup._bulk_row, run_setup._bulk_col]
+    #     out[FileMarker.PRF_HDR_DURATION] = run_setup._duration_second
+    #     if run_setup.exist('percentile'):
+    #         out[FileMarker.PRF_HDR_PERCENTILE] = run_setup['percentile']
+    #     out[FileMarker.PRF_HDR_AVIALABLE_CPU] = multiprocessing.cpu_count()
+    #     out[FileMarker.PRF_HDR_MEMORY] = total
+    #     out[FileMarker.PRF_HDR_MEMORY_FREE] = free
+    #     out[FileMarker.PRF_HDR_HOST] = Helper.get_host()
+    #     out[FileMarker.PRF_HDR_NOW] =  self._start_tasks.isoformat(' ')
+    #
+    #     readable_out = {}
+    #     readable_out[FileMarker.HR_PRF_HDR_LABEL] = self._label if self._label is not None else "Noname"
+    #     readable_out[FileMarker.PRF_HDR_BULK] = [run_setup._bulk_row, run_setup._bulk_col]
+    #     readable_out[FileMarker.PRF_HDR_DURATION] = run_setup._duration_second
+    #     if run_setup.exist('percentile'):
+    #         readable_out[FileMarker.HR_PRF_HDR_PERCENTILE] = run_setup['percentile']
+    #     readable_out[FileMarker.PRF_HDR_AVIALABLE_CPU] = multiprocessing.cpu_count()
+    #     readable_out[FileMarker.HR_PRF_HDR_MEMORY] = f"{total}/{free}"
+    #
+    #     self.print(dumps(out, separators=OutputSetup().json_separator),
+    #                 dumps(readable_out, separators = OutputSetup().human_json_separator))
+    #
+    # def print_footer(self, final_state):
+    #     seconds = round((datetime.utcnow() - self._start_tasks).total_seconds(), 1)
+    #     self.print(f"############### State: {'OK' if final_state else 'Error'}, "
+    #                 f"Duration: {Helper.get_readable_duration(seconds)} ({seconds} "
+    #                 f"seconds) ###############")
+
+    # def print_detail(self, run_setup: RunSetup, return_dict, processes, threads, group=''):
+    #     """
+    #     Print detail from executors
+    #
+    #     :param run_setup:       Setting for executors
+    #     :param return_dict:     Return values from executors
+    #     :param processes:       Number of processes
+    #     :param threads:         Number of threads
+    #     :param group:           Name of group
+    #     :return:                Performance, total calls per one second
+    #     """
+    #     if self._detail_output == True:
+    #         for return_key in return_dict:
+    #             parallel_ret = return_dict[return_key]
+    #             self.print(f"    {str(parallel_ret) if parallel_ret else ParallelProbe.dump_error('SYSTEM overloaded')}",
+    #                        f"    {parallel_ret.readable_str() if parallel_ret else ParallelProbe.readable_dump_error('SYSTEM overloaded')}")
+    #
+    #     # new calculation
+    #     percentile_summaries = self._create_percentile_list(run_setup, return_dict)
+    #
+    #     # A2A form
+    #     out = {}
+    #     out[FileMarker.PRF_TYPE] =  FileMarker.PRF_CORE_TYPE
+    #     out[FileMarker.PRF_CORE_PLAN_EXECUTOR_ALL] = processes * threads
+    #     out[FileMarker.PRF_CORE_PLAN_EXECUTOR] = [processes, threads]
+    #     out[FileMarker.PRF_CORE_REAL_EXECUTOR] = percentile_summaries[1].executors #executors
+    #     out[FileMarker.PRF_CORE_GROUP] = group
+    #     for result in percentile_summaries.values():
+    #         suffix = f"_{int(result.percentile * 100)}" if result.percentile < 1 else ""
+    #         out[FileMarker.PRF_CORE_TOTAL_CALL + suffix] = result.count                         # ok
+    #         out[FileMarker.PRF_CORE_TOTAL_CALL_PER_SEC_RAW + suffix] = result.call_per_sec_raw  # ok
+    #         out[FileMarker.PRF_CORE_TOTAL_CALL_PER_SEC + suffix] = result.call_per_sec          # ok
+    #         out[FileMarker.PRF_CORE_AVRG_TIME + suffix] = result.avrg                           # ok
+    #         out[FileMarker.PRF_CORE_STD_DEVIATION + suffix] = result.std                        # ok
+    #         out[FileMarker.PRF_CORE_MIN + suffix] = result.min                                  # ok
+    #         out[FileMarker.PRF_CORE_MAX + suffix] = result.max                                  # ok
+    #     out[FileMarker.PRF_CORE_TIME_END] = datetime.utcnow().isoformat(' ')
+    #
+    #     # human-readable form
+    #     readable_out = {}
+    #     readable_out[FileMarker.HM_PRF_CORE_PLAN_EXECUTOR_ALL] = f"{processes * threads} [{processes},{threads}]"
+    #     readable_out[FileMarker.HM_PRF_CORE_REAL_EXECUTOR] = percentile_summaries[1].executors # executors
+    #     readable_out[FileMarker.HM_PRF_CORE_GROUP] = group
+    #     for result in percentile_summaries.values():
+    #         suffix = f"_{int(result.percentile * 100)}" if result.percentile < 1 else ""
+    #         readable_out[FileMarker.HM_PRF_CORE_TOTAL_CALL + suffix] = result.count
+    #         if result.call_per_sec_raw == result.call_per_sec:
+    #             call_readable = f"{round(result.call_per_sec_raw, OutputSetup().human_precision)}"
+    #         else:
+    #             call_readable = f"{round(result.call_per_sec_raw, OutputSetup().human_precision)}/{round(result.call_per_sec, OutputSetup().human_precision)}"
+    #         readable_out[FileMarker.HM_PRF_CORE_TOTAL_CALL_PER_SEC + suffix] = call_readable
+    #         readable_out[FileMarker.HM_PRF_CORE_AVRG_TIME + suffix] =  round(result.avrg, OutputSetup().human_precision)
+    #         readable_out[FileMarker.HM_PRF_CORE_STD_DEVIATION + suffix] = round(result.std, OutputSetup().human_precision)
+    #         readable_out[FileMarker.PRF_CORE_MIN + suffix] = round(result.min, OutputSetup().human_precision)
+    #         readable_out[FileMarker.PRF_CORE_MAX + suffix] = round(result.max, OutputSetup().human_precision)
+    #
+    #     # final dump
+    #     self.print(f"  {dumps(out, separators = OutputSetup().json_separator)}",
+    #                 f"  {dumps(readable_out, separators = OutputSetup().human_json_separator)}")
+    #
+    #     return percentile_summaries
