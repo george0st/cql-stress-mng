@@ -287,9 +287,11 @@ def summary(dir):
     comp = StressCompare(dir)
     comp.add_default("LOCAL_ONE")
     comp.run()
+    comp.graph()
     print("==============================")
     comp.add_default("LOCAL_ONE")
     comp.run()
+    comp.graph()
 
 @click.group()
 def run_group():

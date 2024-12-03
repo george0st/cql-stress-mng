@@ -156,3 +156,7 @@ class StressCompare:
     def run_default(self, consistency_level="LOCAL_ONE"):
         self.add_default(consistency_level)
         self.run()
+
+    def graph(self):
+        """Generate graph based on expected compare"""
+        pass
