@@ -5,6 +5,8 @@ import datetime, time
 from os import path, linesep
 import re
 from json import dumps
+from file_marker import FileMarker
+from cql_helper import get_readable_duration
 
 
 class StressSummary:
@@ -164,31 +166,21 @@ class StressSummary:
 
         pass
 
-    # def print_header(self, run_setup: RunSetup=None):
-    #     self._start_tasks = datetime.utcnow()
-    #     self.print(f"############### {self._start_tasks.isoformat(' ')} ###############")
-    #     total, free = Helper.get_memory()
-    #     out = {}
-    #     out[FileMarker.PRF_TYPE] = FileMarker.PRF_HDR_TYPE
-    #     out[FileMarker.PRF_HDR_LABEL] = self._label if self._label is not None else "Noname"
-    #     out[FileMarker.PRF_HDR_BULK] = [run_setup._bulk_row, run_setup._bulk_col]
-    #     out[FileMarker.PRF_HDR_DURATION] = run_setup._duration_second
-    #     if run_setup.exist('percentile'):
-    #         out[FileMarker.PRF_HDR_PERCENTILE] = run_setup['percentile']
-    #     out[FileMarker.PRF_HDR_AVIALABLE_CPU] = multiprocessing.cpu_count()
-    #     out[FileMarker.PRF_HDR_MEMORY] = total
-    #     out[FileMarker.PRF_HDR_MEMORY_FREE] = free
-    #     out[FileMarker.PRF_HDR_HOST] = Helper.get_host()
-    #     out[FileMarker.PRF_HDR_NOW] =  self._start_tasks.isoformat(' ')
-    #
-    #     self.print(dumps(out, separators=OutputSetup().json_separator),
-    #                 dumps(readable_out, separators = OutputSetup().human_json_separator))
-    #
-    # def print_footer(self, final_state):
-    #     seconds = round((datetime.utcnow() - self._start_tasks).total_seconds(), 1)
-    #     self.print(f"############### State: {'OK' if final_state else 'Error'}, "
-    #                 f"Duration: {Helper.get_readable_duration(seconds)} ({seconds} "
-    #                 f"seconds) ###############")
+    def _print_header(self, start_tasks, label, duration):
+        self.print(f"############### {start_tasks.isoformat(' ')} ###############")
+        out = {}
+        out[FileMarker.PRF_TYPE] = FileMarker.PRF_HDR_TYPE
+        out[FileMarker.PRF_HDR_LABEL] = label if label is not None else "Noname"
+        out[FileMarker.PRF_HDR_BULK] = [1, 1]
+        out[FileMarker.PRF_HDR_DURATION] = duration
+        out[FileMarker.PRF_HDR_NOW] =  start_tasks.isoformat(' ')
+
+        self.print(dumps(out)) #, separators=OutputSetup().json_separator))
+
+    def _print_footer(self, final_state, duration_seconds):
+        self.print(f"############### State: {'OK' if final_state else 'Error'}, "
+                    f"Duration: {get_readable_duration(duration_seconds)} ({duration_seconds} "
+                    f"seconds) ###############")
 
     # def print_detail(self, run_setup: RunSetup, return_dict, processes, threads, group=''):
     #     """

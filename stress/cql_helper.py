@@ -58,3 +58,24 @@ def read_file_all(file) -> str:
         for itm in f.readlines():
             content += f"{itm.strip()}\n"
         return content[:-1]
+
+def get_readable_duration(duration_seconds):
+    """Return duration in human-readable form"""
+
+    if duration_seconds < 0:
+        return "n/a"
+
+    str_duration = []
+    days = int(duration_seconds // 86400)
+    if days > 0:
+        str_duration.append(f"{days} day")
+    hours = int(duration_seconds // 3600 % 24)
+    if hours > 0:
+        str_duration.append(f"{hours} hour")
+    minutes = int(duration_seconds // 60 % 60)
+    if minutes > 0:
+        str_duration.append(f"{minutes} min")
+    seconds = int(duration_seconds % 60)
+    if seconds > 0:
+        str_duration.append(f"{seconds} sec")
+    return ' '.join(str_duration)
