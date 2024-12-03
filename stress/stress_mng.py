@@ -283,6 +283,7 @@ def summary(dir):
     summary=StressSummary(dir)
     summary.parse()
     summary.save_csv()
+    summary.save_json()
     comp = StressCompare(dir)
     comp.run_default("LOCAL_ONE")
     print("==============================")
