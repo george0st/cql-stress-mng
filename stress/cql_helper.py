@@ -62,7 +62,8 @@ def read_file_all(file) -> str:
 
 def to_seconds(duration: str):
     number, unit = duration.lower().split()
-    number = int(number)
+    number = int(number.strip())
+    unit = unit.strip()
 
     if unit == "seconds":
         return number
@@ -70,6 +71,9 @@ def to_seconds(duration: str):
         return number * 60
     elif unit == "hours":
         return number * 3600
+    elif unit == "days":
+        return number * 86400
+
     else:
         return -1
 
