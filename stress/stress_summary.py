@@ -163,7 +163,7 @@ class StressSummary:
         for key in self._performance.keys():
             output = None
             try:
-                output = CQLOutput(self._output_dir, key+".txt", False)
+                output = CQLOutput(self._output_dir, key+".json.txt", False)
                 output.open()
 
                 self._print_header(output, datetime.datetime.now(),"", 60 )
@@ -203,4 +203,4 @@ class StressSummary:
         out[FileMarker.PRF_CORE_AVRG_TIME] = performance['avrg']                    # ok
 
         # final dump
-        self.print(f"  {dumps(out)}")
+        output.print(f"  {dumps(out)}")
