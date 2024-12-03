@@ -1,3 +1,5 @@
+import string
+
 import cql_helper as helper
 from cql_output import CQLOutput
 from glob import glob
@@ -14,7 +16,8 @@ class StressSummary:
         The outputs are in json, txt, csv formats
     """
 
-    def __init__(self, output_dir, file_extension = "*.txt"):
+    def __init__(self, input_dir, output_dir, file_extension = "*.txt"):
+        self._input_dir = input_dir
         self._output_dir = output_dir
         self._file_extension = file_extension
         self._performance = {}
@@ -109,7 +112,7 @@ class StressSummary:
         items=[]
         # iteration cross all files
 
-        filter=path.join(self._output_dir, self._file_extension)
+        filter=path.join(self._input_dir, self._file_extension)
         for file_name in glob(filter):
             print("Processing:",file_name)
 
@@ -128,7 +131,7 @@ class StressSummary:
         for key in self._performance.keys():
             output = None
             try:
-                output = CQLOutput(self._output_dir, key+".csv", False)
+                output = CQLOutput(self._output_dir, key + ".csv", False)
                 output.open()
                 output.print("Executors,Group,Performance,Avrg,Latency 95th,Latency 99th,Latency 999th,Max")
 
@@ -144,6 +147,11 @@ class StressSummary:
             finally:
                 if output:
                     output.close()
+
+    def _to_datetime(self, label) -> datetime:
+        keys = label.split()
+        parts = keys[0].split('_')
+        return datetime.datetime.fromisoformat(str.format(f"{parts[0]} {parts[1].replace('-',':')}"))
 
     def save_json(self):
         """Save summary output to TXT (JSON) file"""
@@ -163,14 +171,18 @@ class StressSummary:
         for key in self._performance.keys():
             output = None
             try:
-                output = CQLOutput(self._output_dir, key+".tson", False)
+                output = CQLOutput(self._output_dir, key + ".txt", False)
                 output.open()
 
                 if len(self._performance[key])>0:
                     duration = to_seconds(self._performance[key][0]['duration'])
-                self._print_header(output, datetime.datetime.now(),key, duration)
+                    keys = key.split()
+                    group = keys[1]
+                    date=self._to_datetime(keys[0])
+
+                self._print_header(output, date, str.format(f"{keys[1]} {keys[2]}"), duration)
                 for itm in self._performance[key]:
-                    self._print_detail(output,itm)
+                    self._print_detail(output,itm, group)
                 self._print_footer(output, True,duration)
             finally:
                 if output:
@@ -183,9 +195,10 @@ class StressSummary:
         out[FileMarker.PRF_HDR_LABEL] = label if label is not None else "Noname"
         out[FileMarker.PRF_HDR_BULK] = [1, 1]
         out[FileMarker.PRF_HDR_DURATION] = duration
-        out[FileMarker.PRF_HDR_NOW] =  start_tasks.isoformat(' ')
+        out[FileMarker.PRF_HDR_RESPONSE_UNIT] = "msec"
+        out[FileMarker.PRF_HDR_NOW] = start_tasks.isoformat(' ')
 
-        output.print(dumps(out)) #, separators=OutputSetup().json_separator))
+        output.print(dumps(out))
 
     def _print_footer(self, output:CQLOutput, final_state, duration_seconds):
         output.print(f"############### State: {'OK' if final_state else 'Error'}, "
@@ -199,10 +212,11 @@ class StressSummary:
 
         out = {}
         out[FileMarker.PRF_TYPE] =  FileMarker.PRF_CORE_TYPE
-        out[FileMarker.PRF_CORE_REAL_EXECUTOR] = performance['executors']
+        out[FileMarker.PRF_CORE_REAL_EXECUTOR] = int(performance['executors'])
         out[FileMarker.PRF_CORE_GROUP] = group
-        out[FileMarker.PRF_CORE_TOTAL_CALL_PER_SEC] = performance['performance']    # ok
-        out[FileMarker.PRF_CORE_AVRG_TIME] = performance['avrg']                    # ok
+        out[FileMarker.PRF_CORE_TOTAL_CALL_PER_SEC] = float(performance['performance'])    # ok
+        out[FileMarker.PRF_CORE_AVRG_TIME] = float(performance['avrg'])                    # ok
+        out[FileMarker.PRF_CORE_STD_DEVIATION] = 0                                         # ok
 
         # final dump
         output.print(f"  {dumps(out)}")
