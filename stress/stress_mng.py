@@ -285,9 +285,11 @@ def summary(dir):
     summary.save_csv()
     summary.save_json()
     comp = StressCompare(dir)
-    comp.run_default("LOCAL_ONE")
+    comp.add_default("LOCAL_ONE")
+    comp.run()
     print("==============================")
-    comp.run_default("LOCAL_QUORUM")
+    comp.add_default("LOCAL_ONE")
+    comp.run()
 
 @click.group()
 def run_group():

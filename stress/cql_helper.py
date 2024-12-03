@@ -61,6 +61,9 @@ def read_file_all(file) -> str:
         return content[:-1]
 
 def to_seconds(duration: str):
+    """Convert text description of duration to the seconds. Expected inputs
+        '5 minutes', '15 hours"', etc.
+    """
     number, unit = duration.lower().split()
     number = int(number.strip())
     unit = unit.strip()
@@ -73,10 +76,8 @@ def to_seconds(duration: str):
         return number * 3600
     elif unit == "days":
         return number * 86400
-
     else:
         return -1
-
 
 def get_readable_duration(duration_seconds):
     """Return duration in human-readable form"""

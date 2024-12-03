@@ -113,8 +113,7 @@ class StressCompare:
         print(header)
         print(final_output)
 
-    def run_default(self, consistency_level="LOCAL_ONE"):
-
+    def add_default(self, consistency_level="LOCAL_ONE"):
         self._items=[]
         # STCS - heavy write, LCS - read heavy
         # L - read heavy, T - write heavy
@@ -153,4 +152,7 @@ class StressCompare:
         self.add_file_set(f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS.csv",
                         f"v5 read_{consistency_level}_UCS10", f"*v5 read_{consistency_level}_UCS10.csv")
 
+
+    def run_default(self, consistency_level="LOCAL_ONE"):
+        self.add_default(consistency_level)
         self.run()
