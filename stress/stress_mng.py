@@ -280,13 +280,18 @@ def summary_group():
 @click.option("-d", "--dir", help="directory with particular items (default './stress_output/')", default="./stress_output/")
 def summary(dir):
     """Run performance tests based on ENV file(s)."""
-    summary=StressSummary(dir)
+    summary=StressSummary(dir, path.join(dir, "extract"))
     summary.parse()
     summary.save_csv()
-    comp = StressCompare(dir)
-    comp.run_default("LOCAL_ONE")
+    summary.save_json()
+    comp = StressCompare(path.join(dir, "extract"))
+    comp.add_default("LOCAL_ONE")
+    comp.run()
+    comp.graph(path.join(dir, "graph"))
     print("==============================")
-    comp.run_default("LOCAL_QUORUM")
+    comp.add_default("LOCAL_ONE")
+    comp.run()
+    comp.graph()
 
 @click.group()
 def run_group():

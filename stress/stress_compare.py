@@ -1,7 +1,7 @@
 from polars import read_csv
-import os
-import glob
-
+from qgate_graph.graph_performance import GraphPerformance
+from glob import glob
+from os import path
 
 class StressCompare:
     """ Generate compare stress tests (typically between cassandra v4/old and v5/new).
@@ -28,9 +28,9 @@ class StressCompare:
         new_file = None
         old_file = None
 
-        for file in glob.glob(os.path.join(self._path, new_file_name)):
+        for file in glob(path.join(self._path, new_file_name)):
             new_file = file
-        for file in glob.glob(os.path.join(self._path, old_file_name)):
+        for file in glob(path.join(self._path, old_file_name)):
             old_file = file
 
         if new_file is None or old_file is None:
@@ -113,8 +113,7 @@ class StressCompare:
         print(header)
         print(final_output)
 
-    def run_default(self, consistency_level="LOCAL_ONE"):
-
+    def add_default(self, consistency_level="LOCAL_ONE"):
         self._items=[]
         # STCS - heavy write, LCS - read heavy
         # L - read heavy, T - write heavy
@@ -153,4 +152,22 @@ class StressCompare:
         self.add_file_set(f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS.csv",
                         f"v5 read_{consistency_level}_UCS10", f"*v5 read_{consistency_level}_UCS10.csv")
 
+
+    def run_default(self, consistency_level="LOCAL_ONE"):
+        self.add_default(consistency_level)
         self.run()
+
+    def graph(self,output_dir="output"):
+        """Generate graph based on expected compare"""
+
+        graph = GraphPerformance()
+
+        output_list=[]
+
+        # generate all
+        filter=path.join(self._path, "*.txt")
+        for input_file in glob(filter):
+            for file in graph.generate_from_file(input_file, output_dir):
+                output_list.append(file)
+
+        # generate compared graphs

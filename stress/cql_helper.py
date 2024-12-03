@@ -1,6 +1,7 @@
 from time import perf_counter, perf_counter_ns, sleep
 #from numpy import random
 import string
+import re
 
 
 # def get_rng_generator(complex_init = True) -> random._generator.Generator:
@@ -58,3 +59,43 @@ def read_file_all(file) -> str:
         for itm in f.readlines():
             content += f"{itm.strip()}\n"
         return content[:-1]
+
+def to_seconds(duration: str):
+    """Convert text description of duration to the seconds. Expected inputs
+        '5 minutes', '15 hours"', etc.
+    """
+    number, unit = duration.lower().split()
+    number = int(number.strip())
+    unit = unit.strip()
+
+    if unit == "seconds":
+        return number
+    if unit == "minutes":
+        return number * 60
+    elif unit == "hours":
+        return number * 3600
+    elif unit == "days":
+        return number * 86400
+    else:
+        return -1
+
+def get_readable_duration(duration_seconds):
+    """Return duration in human-readable form"""
+
+    if duration_seconds < 0:
+        return "n/a"
+
+    str_duration = []
+    days = int(duration_seconds // 86400)
+    if days > 0:
+        str_duration.append(f"{days} day")
+    hours = int(duration_seconds // 3600 % 24)
+    if hours > 0:
+        str_duration.append(f"{hours} hour")
+    minutes = int(duration_seconds // 60 % 60)
+    if minutes > 0:
+        str_duration.append(f"{minutes} min")
+    seconds = int(duration_seconds % 60)
+    if seconds > 0:
+        str_duration.append(f"{seconds} sec")
+    return ' '.join(str_duration)

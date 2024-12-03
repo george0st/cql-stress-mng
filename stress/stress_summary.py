@@ -1,3 +1,5 @@
+import string
+
 import cql_helper as helper
 from cql_output import CQLOutput
 from glob import glob
@@ -5,6 +7,8 @@ import datetime, time
 from os import path, linesep
 import re
 from json import dumps
+from file_marker import FileMarker
+from cql_helper import get_readable_duration, to_seconds
 
 
 class StressSummary:
@@ -12,7 +16,8 @@ class StressSummary:
         The outputs are in json, txt, csv formats
     """
 
-    def __init__(self, output_dir, file_extension = "*.txt"):
+    def __init__(self, input_dir, output_dir, file_extension = "*.txt"):
+        self._input_dir = input_dir
         self._output_dir = output_dir
         self._file_extension = file_extension
         self._performance = {}
@@ -107,7 +112,7 @@ class StressSummary:
         items=[]
         # iteration cross all files
 
-        filter=path.join(self._output_dir, self._file_extension)
+        filter=path.join(self._input_dir, self._file_extension)
         for file_name in glob(filter):
             print("Processing:",file_name)
 
@@ -126,7 +131,7 @@ class StressSummary:
         for key in self._performance.keys():
             output = None
             try:
-                output = CQLOutput(self._output_dir, key+".csv", False)
+                output = CQLOutput(self._output_dir, key + ".csv", False)
                 output.open()
                 output.print("Executors,Group,Performance,Avrg,Latency 95th,Latency 99th,Latency 999th,Max")
 
@@ -143,10 +148,14 @@ class StressSummary:
                 if output:
                     output.close()
 
+    def _to_datetime(self, label) -> datetime:
+        keys = label.split()
+        parts = keys[0].split('_')
+        return datetime.datetime.fromisoformat(str.format(f"{parts[0]} {parts[1].replace('-',':')}"))
+
     def save_json(self):
         """Save summary output to TXT (JSON) file"""
     ################ 2023-10-15 15:09:20.638004 ###############
-    # {"type": "headr", "label": "test_aus_ger", "bulk": [10, 10], "cpu": 12, "mem": "15.2 GB", "mem_free": "5.5 GB", "host": "HCI-L3204/192.168.0.150", "now": "2023-10-15 15:09:20.638004"}
     # {"type":"headr","label":"cassandra-163551-W1-low","bulk":[200,10],"duration":60,"percentile":0.95,"cpu":8,"mem":"15.1 GB","mem_free":"12.7 GB","host":"os01-jic76ebbnzgz.cz.infra/10.129.54.56","now":"2024-10-11 14:36:07.799293"}
     #   {"type": "core",
         #   "real_executors": 2,
@@ -155,81 +164,59 @@ class StressSummary:
         #   "avrg_time": 1.5524560610453289,
         #   "std_deviation": 0.00418030586255807}
     #   {"type": "core", "plan_executors": 4, "plan_executors_detail": [2, 2], "real_executors": 4, "group": "Austria perf", "total_calls": 12, "total_call_per_sec": 25.8796241474028, "avrg_time": 1.5456175009409585, "std_deviation": 0.007724887210259932, "endexec": "2023-10-15 15:09:39.049110"}
-    #   {"type": "core", "plan_executors": 8, "plan_executors_detail": [4, 2], "real_executors": 8, "group": "Austria perf", "total_calls": 24, "total_call_per_sec": 51.68629474505174, "avrg_time": 1.5477990905443828, "std_deviation": 0.0030063451073294354, "endexec": "2023-10-15 15:09:49.170053"}
     #   {"type": "core", "plan_executors": 4, "plan_executors_detail": [1, 4], "real_executors": 4, "group": "Germany perf", "total_calls": 12, "total_call_per_sec": 25.74525310264132, "avrg_time": 1.5536844730377197, "std_deviation": 0.004366116211321063, "endexec": "2023-10-15 15:09:58.374092"}
     #   {"type": "core", "plan_executors": 8, "plan_executors_detail": [2, 4], "real_executors": 8, "group": "Germany perf", "total_calls": 24, "total_call_per_sec": 51.35900922500767, "avrg_time": 1.5576624472935996, "std_deviation": 0.004880468682655263, "endexec": "2023-10-15 15:10:07.503113"}
     #   {"type": "core", "plan_executors": 16, "plan_executors_detail": [4, 4], "real_executors": 16, "group": "Germany perf", "total_calls": 48, "total_call_per_sec": 103.95169615994652, "avrg_time": 1.5391764243443808, "std_deviation": 0.009352894892740266, "endexec": "2023-10-15 15:10:17.224968"}
     # ############### State: OK,  Duration: 56.6 seconds ###############
+        for key in self._performance.keys():
+            output = None
+            try:
+                output = CQLOutput(self._output_dir, key + ".txt", False)
+                output.open()
 
+                if len(self._performance[key])>0:
+                    duration = to_seconds(self._performance[key][0]['duration'])
+                    keys = key.split()
+                    group = keys[1]
+                    date=self._to_datetime(keys[0])
 
-        pass
+                self._print_header(output, date, str.format(f"{keys[1]} {keys[2]}"), duration)
+                for itm in self._performance[key]:
+                    self._print_detail(output,itm, group)
+                self._print_footer(output, True,duration)
+            finally:
+                if output:
+                    output.close()
 
-    # def print_header(self, run_setup: RunSetup=None):
-    #     self._start_tasks = datetime.utcnow()
-    #     self.print(f"############### {self._start_tasks.isoformat(' ')} ###############")
-    #     total, free = Helper.get_memory()
-    #     out = {}
-    #     out[FileMarker.PRF_TYPE] = FileMarker.PRF_HDR_TYPE
-    #     out[FileMarker.PRF_HDR_LABEL] = self._label if self._label is not None else "Noname"
-    #     out[FileMarker.PRF_HDR_BULK] = [run_setup._bulk_row, run_setup._bulk_col]
-    #     out[FileMarker.PRF_HDR_DURATION] = run_setup._duration_second
-    #     if run_setup.exist('percentile'):
-    #         out[FileMarker.PRF_HDR_PERCENTILE] = run_setup['percentile']
-    #     out[FileMarker.PRF_HDR_AVIALABLE_CPU] = multiprocessing.cpu_count()
-    #     out[FileMarker.PRF_HDR_MEMORY] = total
-    #     out[FileMarker.PRF_HDR_MEMORY_FREE] = free
-    #     out[FileMarker.PRF_HDR_HOST] = Helper.get_host()
-    #     out[FileMarker.PRF_HDR_NOW] =  self._start_tasks.isoformat(' ')
-    #
-    #     self.print(dumps(out, separators=OutputSetup().json_separator),
-    #                 dumps(readable_out, separators = OutputSetup().human_json_separator))
-    #
-    # def print_footer(self, final_state):
-    #     seconds = round((datetime.utcnow() - self._start_tasks).total_seconds(), 1)
-    #     self.print(f"############### State: {'OK' if final_state else 'Error'}, "
-    #                 f"Duration: {Helper.get_readable_duration(seconds)} ({seconds} "
-    #                 f"seconds) ###############")
+    def _print_header(self, output:CQLOutput, start_tasks, label, duration):
+        output.print(f"############### {start_tasks.isoformat(' ')} ###############")
+        out = {}
+        out[FileMarker.PRF_TYPE] = FileMarker.PRF_HDR_TYPE
+        out[FileMarker.PRF_HDR_LABEL] = label if label is not None else "Noname"
+        out[FileMarker.PRF_HDR_BULK] = [1, 1]
+        out[FileMarker.PRF_HDR_DURATION] = duration
+        out[FileMarker.PRF_HDR_RESPONSE_UNIT] = "msec"
+        out[FileMarker.PRF_HDR_NOW] = start_tasks.isoformat(' ')
 
-    # def print_detail(self, run_setup: RunSetup, return_dict, processes, threads, group=''):
-    #     """
-    #     Print detail from executors
-    #
-    #     :param run_setup:       Setting for executors
-    #     :param return_dict:     Return values from executors
-    #     :param processes:       Number of processes
-    #     :param threads:         Number of threads
-    #     :param group:           Name of group
-    #     :return:                Performance, total calls per one second
-    #     """
-    #     if self._detail_output == True:
-    #         for return_key in return_dict:
-    #             parallel_ret = return_dict[return_key]
-    #             self.print(f"    {str(parallel_ret) if parallel_ret else ParallelProbe.dump_error('SYSTEM overloaded')}",
-    #                        f"    {parallel_ret.readable_str() if parallel_ret else ParallelProbe.readable_dump_error('SYSTEM overloaded')}")
-    #
-    #     # new calculation
-    #     percentile_summaries = self._create_percentile_list(run_setup, return_dict)
-    #
-    #     # A2A form
-    #     out = {}
-    #     out[FileMarker.PRF_TYPE] =  FileMarker.PRF_CORE_TYPE
-    #     out[FileMarker.PRF_CORE_PLAN_EXECUTOR_ALL] = processes * threads
-    #     out[FileMarker.PRF_CORE_PLAN_EXECUTOR] = [processes, threads]
-    #     out[FileMarker.PRF_CORE_REAL_EXECUTOR] = percentile_summaries[1].executors #executors
-    #     out[FileMarker.PRF_CORE_GROUP] = group
-    #     for result in percentile_summaries.values():
-    #         suffix = f"_{int(result.percentile * 100)}" if result.percentile < 1 else ""
-    #         out[FileMarker.PRF_CORE_TOTAL_CALL + suffix] = result.count                         # ok
-    #         out[FileMarker.PRF_CORE_TOTAL_CALL_PER_SEC_RAW + suffix] = result.call_per_sec_raw  # ok
-    #         out[FileMarker.PRF_CORE_TOTAL_CALL_PER_SEC + suffix] = result.call_per_sec          # ok
-    #         out[FileMarker.PRF_CORE_AVRG_TIME + suffix] = result.avrg                           # ok
-    #         out[FileMarker.PRF_CORE_STD_DEVIATION + suffix] = result.std                        # ok
-    #         out[FileMarker.PRF_CORE_MIN + suffix] = result.min                                  # ok
-    #         out[FileMarker.PRF_CORE_MAX + suffix] = result.max                                  # ok
-    #     out[FileMarker.PRF_CORE_TIME_END] = datetime.utcnow().isoformat(' ')
-    #
-    #     # final dump
-    #     self.print(f"  {dumps(out, separators = OutputSetup().json_separator)}",
-    #                 f"  {dumps(readable_out, separators = OutputSetup().human_json_separator)}")
-    #
-    #     return percentile_summaries
+        output.print(dumps(out))
+
+    def _print_footer(self, output:CQLOutput, final_state, duration_seconds):
+        output.print(f"############### State: {'OK' if final_state else 'Error'}, "
+                    f"Duration: {get_readable_duration(duration_seconds)} ({duration_seconds} "
+                    f"seconds) ###############")
+
+    def _print_detail(self, output:CQLOutput, performance, group=''):
+        """
+        Print detail from performance
+        """
+
+        out = {}
+        out[FileMarker.PRF_TYPE] =  FileMarker.PRF_CORE_TYPE
+        out[FileMarker.PRF_CORE_REAL_EXECUTOR] = int(performance['executors'])
+        out[FileMarker.PRF_CORE_GROUP] = group
+        out[FileMarker.PRF_CORE_TOTAL_CALL_PER_SEC] = float(performance['performance'])    # ok
+        out[FileMarker.PRF_CORE_AVRG_TIME] = float(performance['avrg'])                    # ok
+        out[FileMarker.PRF_CORE_STD_DEVIATION] = 0                                         # ok
+
+        # final dump
+        output.print(f"  {dumps(out)}")
