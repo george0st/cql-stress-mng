@@ -1,6 +1,7 @@
 from time import perf_counter, perf_counter_ns, sleep
 #from numpy import random
 import string
+import re
 
 
 # def get_rng_generator(complex_init = True) -> random._generator.Generator:
@@ -58,6 +59,20 @@ def read_file_all(file) -> str:
         for itm in f.readlines():
             content += f"{itm.strip()}\n"
         return content[:-1]
+
+def to_seconds(duration: str):
+    number, unit = duration.lower().split()
+    number = int(number)
+
+    if unit == "seconds":
+        return number
+    if unit == "minutes":
+        return number * 60
+    elif unit == "hours":
+        return number * 3600
+    else:
+        return -1
+
 
 def get_readable_duration(duration_seconds):
     """Return duration in human-readable form"""

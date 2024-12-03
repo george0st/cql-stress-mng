@@ -6,7 +6,7 @@ from os import path, linesep
 import re
 from json import dumps
 from file_marker import FileMarker
-from cql_helper import get_readable_duration
+from cql_helper import get_readable_duration, to_seconds
 
 
 class StressSummary:
@@ -163,13 +163,15 @@ class StressSummary:
         for key in self._performance.keys():
             output = None
             try:
-                output = CQLOutput(self._output_dir, key+".json.txt", False)
+                output = CQLOutput(self._output_dir, key+".tson", False)
                 output.open()
 
-                self._print_header(output, datetime.datetime.now(),"", 60 )
+                if len(self._performance[key])>0:
+                    duration = to_seconds(self._performance[key][0]['duration'])
+                self._print_header(output, datetime.datetime.now(),key, duration)
                 for itm in self._performance[key]:
                     self._print_detail(output,itm)
-                self._print_footer(output, True)
+                self._print_footer(output, True,duration)
             finally:
                 if output:
                     output.close()
