@@ -11,8 +11,6 @@ polars==1.15
 # issue with matplotlib==3.9.2 under python 3.13t
 #matplotlib>=3.9.0,<=3.9.2
 
-#qgate-stress==0.4.50
-
 qgate-graph==1.4.30
 
 # https://github.com/theskumar/python-dotenv
