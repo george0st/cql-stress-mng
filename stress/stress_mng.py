@@ -287,11 +287,12 @@ def summary(dir):
     comp = StressCompare(path.join(dir, "extract"))
     comp.add_default("LOCAL_ONE")
     comp.run()
+    comp.graph_all(path.join(dir, "graph"))
     comp.graph(path.join(dir, "graph"))
     print("==============================")
     comp.add_default("LOCAL_ONE")
     comp.run()
-    comp.graph()
+    comp.graph(path.join(dir, "graph"))
 
 @click.group()
 def run_group():

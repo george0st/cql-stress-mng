@@ -1,7 +1,6 @@
 from time import perf_counter, perf_counter_ns, sleep
-#from numpy import random
-import string
 import re
+from json import loads
 
 
 # def get_rng_generator(complex_init = True) -> random._generator.Generator:
@@ -99,3 +98,9 @@ def get_readable_duration(duration_seconds):
     if seconds > 0:
         str_duration.append(f"{seconds} sec")
     return ' '.join(str_duration)
+
+def load_json(line):
+    try:
+        return loads(line.strip())
+    except Exception as ex:
+        pass

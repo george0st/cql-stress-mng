@@ -5,11 +5,13 @@ import platform
 
 class CQLOutput:
 
-    def __init__(self, perf_dir, output_file = None, output_screen = True, mode = "wt"):
+    def __init__(self, perf_dir = None, output_file = None, output_screen = True, mode = "wt", text = True):
         self._perf_dir = perf_dir
         self._output_file = output_file
         self._output_screen = output_screen
         self._mode=mode
+        self._text = text
+        self._text_buffer = []
         self._file = None
         self._newLine="\n" if platform.system().lower()=="windows" else linesep
 
@@ -21,11 +23,15 @@ class CQLOutput:
                 if not path.exists(full_dir):
                     makedirs(full_dir, mode=0o777)
             self._file = open(path.join(self._perf_dir,self._output_file), self._mode, encoding="utf-8")
+        if self._text:
+            self._text_buffer=[]
 
     def close(self):
         if self._file is not None:
             self._file.close()
             self._file = None
+        if self._text:
+            self._text_buffer=""
 
     def print(self, out: str = ""):
 
@@ -35,6 +41,9 @@ class CQLOutput:
 
         if self._output_screen:
             print(out)
+
+        if self._text:
+            self._text_buffer.append(out)
 
     def print_cmd(self, cmd, global_counter, run_value_index, params:dict):
 
@@ -55,3 +64,7 @@ class CQLOutput:
 
     def print_footer(self):
         pass
+
+    @property
+    def text_buffer(self):
+        return self._newLine.join(self._text_buffer)
