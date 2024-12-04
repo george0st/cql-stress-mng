@@ -252,7 +252,8 @@ def version_group():
 def version():
     """Versions of key components."""
     from cassandra import __version__ as cassandra_version
-    from polars import __version__ as polars_verion
+    from polars import __version__ as polars_version
+    from qgate_graph import __version__ as qgate_graph_version
     from prettytable import PrettyTable
     import version
     import sys
@@ -267,7 +268,8 @@ def version():
     table.align = "l"
 
     table.add_row([Fore.LIGHTRED_EX + "stress"+ Style.RESET_ALL, Fore.LIGHTRED_EX + version.__version__+Style.RESET_ALL])
-    table.add_row(["polars", polars_verion])
+    table.add_row(["polars", polars_version])
+    table.add_row(["qgate_graph", qgate_graph_version])
     table.add_row(["cassandra-driver", cassandra_version])
     table.add_row(["python", sys.version])
     print(table)
