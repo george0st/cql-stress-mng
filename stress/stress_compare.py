@@ -88,7 +88,7 @@ class StressCompare:
             print("!!! DIFFERENT EXECUTORS !!!!")
         return new_row.replace(".",",").replace(" ms",""), new_executors
 
-    def run(self):
+    def text(self):
 
         executors=""
         output=""
@@ -126,46 +126,46 @@ class StressCompare:
         # L - read heavy, T - write heavy
 
         # extra tests for WRITE (compare with STCS)
-        self.add_file_set(f"v4/v5 write_{consistency_level}_STCS",
+        self.add_file_set(f"v4 vs v5 write_{consistency_level}_STCS",
                           f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS",
                           f"v5 write_{consistency_level}_STCS", f"*v5 write_{consistency_level}_STCS")
 
         # optional compare
-        self.add_file_set(f"v4/v5 write_{consistency_level}_STCS/UCS2",
+        self.add_file_set(f"v4 vs v5 write_{consistency_level}_STCS-UCS2",
                           f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS",
                           f"v5 write_{consistency_level}_UCS2", f"*v5 write_{consistency_level}_UCS2", True)
 
-        self.add_file_set(f"v4/v5 write_{consistency_level}_STCS/UCS4",
+        self.add_file_set(f"v4 vs v5 write_{consistency_level}_STCS-UCS4",
                           f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS",
                         f"v5 write_{consistency_level}_UCS4", f"*v5 write_{consistency_level}_UCS4")
 
-        self.add_file_set(f"v4/v5 write_{consistency_level}_STCS/UCS8",
+        self.add_file_set(f"v4 vs v5 write_{consistency_level}_STCS-UCS8",
                           f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS",
                         f"v5 write_{consistency_level}_UCS8", f"*v5 write_{consistency_level}_UCS8")
 
-        self.add_file_set( f"v4/v5 write_{consistency_level}_STCS/UCS10",
+        self.add_file_set( f"v4 vs v5 write_{consistency_level}_STCS-UCS10",
                            f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS",
                         f"v5 write_{consistency_level}_UCS10", f"*v5 write_{consistency_level}_UCS10")
 
         # extra tests for READ (compare with LCS)
-        self.add_file_set(f"v4/v5 read_{consistency_level}_LCS",
+        self.add_file_set(f"v4 vs v5 read_{consistency_level}_LCS",
                           f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS",
                         f"v5 read_{consistency_level}_LCS", f"*v5 read_{consistency_level}_LCS")
 
         # optional compare
-        self.add_file_set(f"v4/v5 read_{consistency_level}_LCS/UCS2",
+        self.add_file_set(f"v4 vs v5 read_{consistency_level}_LCS-UCS2",
                           f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS",
                         f"v5 read_{consistency_level}_UCS2", f"*v5 read_{consistency_level}_UCS2", True)
 
-        self.add_file_set(f"v4/v5 read_{consistency_level}_LCS/UCS4",
+        self.add_file_set(f"v4 vs v5 read_{consistency_level}_LCS-UCS4",
                           f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS",
                         f"v5 read_{consistency_level}_UCS4", f"*v5 read_{consistency_level}_UCS4")
 
-        self.add_file_set(f"v4/v5 read_{consistency_level}_LCS/UCS8",
+        self.add_file_set(f"v4 vs v5 read_{consistency_level}_LCS-UCS8",
                           f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS",
                         f"v5 read_{consistency_level}_UCS8", f"*v5 read_{consistency_level}_UCS8")
 
-        self.add_file_set(f"v4/v5 read_{consistency_level}_LCS/UCS10",
+        self.add_file_set(f"v4 vs v5 read_{consistency_level}_LCS-UCS10",
                           f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS",
                         f"v5 read_{consistency_level}_UCS10", f"*v5 read_{consistency_level}_UCS10")
 
@@ -267,15 +267,19 @@ class StressCompare:
 
             if compare_cores:
                 # build text output
-                output = CQLOutput(text=True)
+                output = CQLOutput(output_screen=False, text=True)
                 output.open()
                 graph = GraphOutput(output)
                 graph.print_header(now, join_title, duration)
                 graph.print_details(compare_cores)
                 graph.print_footer(True, duration)
 
-                print(output.text_buffer)
+                #print(output.text_buffer)
                 # create graph based on text output
+
+                generator = GraphPerformance()
+                generator.generate_from_text(output.text_buffer, output_dir, suppress_error=True)
+                output.close()
 
             else:
                 if not optional:

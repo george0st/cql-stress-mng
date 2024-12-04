@@ -31,7 +31,7 @@ class CQLOutput:
             self._file.close()
             self._file = None
         if self._text:
-            self._text_buffer=""
+            self._text_buffer=[]
 
     def print(self, out: str = ""):
 
