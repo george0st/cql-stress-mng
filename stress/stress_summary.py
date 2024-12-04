@@ -216,7 +216,7 @@ class StressSummary:
         out[FileMarker.PRF_CORE_GROUP] = group
         out[FileMarker.PRF_CORE_TOTAL_CALL_PER_SEC] = float(performance['performance'])    # ok
         out[FileMarker.PRF_CORE_AVRG_TIME] = float(performance['avrg'])                    # ok
-        out[FileMarker.PRF_CORE_STD_DEVIATION] = 0                                         # ok
+        #out[FileMarker.PRF_CORE_STD_DEVIATION] = 0                                         # ok
 
         # final dump
         output.print(f"  {dumps(out)}")
