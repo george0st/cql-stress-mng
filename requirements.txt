@@ -13,7 +13,7 @@ polars==1.15
 
 #qgate-stress==0.4.50
 
-qgate-graph==1.4.29
+qgate-graph==1.4.30
 
 # https://github.com/theskumar/python-dotenv
 python-dotenv~=1.0
