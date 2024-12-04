@@ -1,7 +1,4 @@
-import json
-
 from polars import read_csv
-from qgate_graph.graph_performance import GraphPerformance
 from graph_output import GraphOutput
 from glob import glob
 from os import path
@@ -205,9 +202,7 @@ class StressCompare:
 
         # compare
         compare_cores = []
-        compare_header = []
 
-        #compare_header=self._join_titles(old_header['label'], new_header['label'])
         for core in new_cores:
             core['group']=new_label
             compare_cores.append(core)
@@ -215,23 +210,7 @@ class StressCompare:
             core['group'] = old_label
             compare_cores.append(core)
 
-        #return compare_header, compare_cores, new_header['duration'], datetime.datetime.fromisoformat(new_header['now'])
         return compare_cores, new_header['duration'], datetime.datetime.fromisoformat(new_header['now'])
-
-    def _join_titles(self, old_title, new_title):
-        new_titles = new_title.replace("_", " ").split()
-        old_titles = old_title.replace("_", " ").split()
-        join_titles=[]
-
-        if len(new_titles)==len(old_titles):
-            for index in range(len(new_titles)):
-                if new_titles[index]==old_titles[index]:
-                    join_titles.append(new_titles[index])
-                else:
-                    join_titles.append(new_titles[index]+old_titles[index])
-
-        return " ".join(join_titles)
-
 
     def _parse_json(self, input_file):
 
@@ -257,8 +236,7 @@ class StressCompare:
 
     def graph(self, output_dir="output"):
         """Generate graph based on expected compare"""
-
-        # TODO: generate graphs based on requested setting
+        from qgate_graph.graph_performance import GraphPerformance
 
         for item_set in self._items:
             optional = item_set[4]

@@ -5,7 +5,6 @@ import datetime, time
 from os import path, linesep
 import re
 from json import dumps
-from file_marker import FileMarker
 from cql_helper import get_readable_duration, to_seconds
 from graph_output import GraphOutput
 
