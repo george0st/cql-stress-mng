@@ -1,5 +1,3 @@
-import string
-
 import cql_helper as helper
 from cql_output import CQLOutput
 from glob import glob
@@ -7,9 +5,8 @@ import datetime, time
 from os import path, linesep
 import re
 from json import dumps
-from file_marker import FileMarker
 from cql_helper import get_readable_duration, to_seconds
-
+from graph_output import GraphOutput
 
 class StressSummary:
     """ Generate summary outputs from particular tests (a lot of detail outputs).
@@ -155,23 +152,11 @@ class StressSummary:
 
     def save_json(self):
         """Save summary output to TXT (JSON) file"""
-    ################ 2023-10-15 15:09:20.638004 ###############
-    # {"type":"headr","label":"cassandra-163551-W1-low","bulk":[200,10],"duration":60,"percentile":0.95,"cpu":8,"mem":"15.1 GB","mem_free":"12.7 GB","host":"os01-jic76ebbnzgz.cz.infra/10.129.54.56","now":"2024-10-11 14:36:07.799293"}
-    #   {"type": "core",
-        #   "real_executors": 2,
-        #   "group": "Austria perf",
-        #   "total_call_per_sec": 12.882812275236457,
-        #   "avrg_time": 1.5524560610453289,
-        #   "std_deviation": 0.00418030586255807}
-    #   {"type": "core", "plan_executors": 4, "plan_executors_detail": [2, 2], "real_executors": 4, "group": "Austria perf", "total_calls": 12, "total_call_per_sec": 25.8796241474028, "avrg_time": 1.5456175009409585, "std_deviation": 0.007724887210259932, "endexec": "2023-10-15 15:09:39.049110"}
-    #   {"type": "core", "plan_executors": 4, "plan_executors_detail": [1, 4], "real_executors": 4, "group": "Germany perf", "total_calls": 12, "total_call_per_sec": 25.74525310264132, "avrg_time": 1.5536844730377197, "std_deviation": 0.004366116211321063, "endexec": "2023-10-15 15:09:58.374092"}
-    #   {"type": "core", "plan_executors": 8, "plan_executors_detail": [2, 4], "real_executors": 8, "group": "Germany perf", "total_calls": 24, "total_call_per_sec": 51.35900922500767, "avrg_time": 1.5576624472935996, "std_deviation": 0.004880468682655263, "endexec": "2023-10-15 15:10:07.503113"}
-    #   {"type": "core", "plan_executors": 16, "plan_executors_detail": [4, 4], "real_executors": 16, "group": "Germany perf", "total_calls": 48, "total_call_per_sec": 103.95169615994652, "avrg_time": 1.5391764243443808, "std_deviation": 0.009352894892740266, "endexec": "2023-10-15 15:10:17.224968"}
-    # ############### State: OK,  Duration: 56.6 seconds ###############
         for key in self._performance.keys():
             output = None
             try:
                 output = CQLOutput(self._output_dir, key + ".txt", False)
+                graph = GraphOutput(output)
                 output.open()
 
                 if len(self._performance[key])>0:
@@ -180,43 +165,10 @@ class StressSummary:
                     group = keys[1]
                     date=self._to_datetime(keys[0])
 
-                self._print_header(output, date, str.format(f"{keys[1]} {keys[2]}"), duration)
+                graph.print_header(date, str.format(f"{keys[1]} {keys[2]}"), duration)
                 for itm in self._performance[key]:
-                    self._print_detail(output,itm, group)
-                self._print_footer(output, True,duration)
+                    graph.print_detail(itm, group) #f"{keys[1]} {keys[2]}")
+                graph.print_footer(True,duration)
             finally:
                 if output:
                     output.close()
-
-    def _print_header(self, output:CQLOutput, start_tasks, label, duration):
-        output.print(f"############### {start_tasks.isoformat(' ')} ###############")
-        out = {}
-        out[FileMarker.PRF_TYPE] = FileMarker.PRF_HDR_TYPE
-        out[FileMarker.PRF_HDR_LABEL] = label if label is not None else "Noname"
-        out[FileMarker.PRF_HDR_BULK] = [1, 1]
-        out[FileMarker.PRF_HDR_DURATION] = duration
-        out[FileMarker.PRF_HDR_RESPONSE_UNIT] = "msec"
-        out[FileMarker.PRF_HDR_NOW] = start_tasks.isoformat(' ')
-
-        output.print(dumps(out))
-
-    def _print_footer(self, output:CQLOutput, final_state, duration_seconds):
-        output.print(f"############### State: {'OK' if final_state else 'Error'}, "
-                    f"Duration: {get_readable_duration(duration_seconds)} ({duration_seconds} "
-                    f"seconds) ###############")
-
-    def _print_detail(self, output:CQLOutput, performance, group=''):
-        """
-        Print detail from performance
-        """
-
-        out = {}
-        out[FileMarker.PRF_TYPE] =  FileMarker.PRF_CORE_TYPE
-        out[FileMarker.PRF_CORE_REAL_EXECUTOR] = int(performance['executors'])
-        out[FileMarker.PRF_CORE_GROUP] = group
-        out[FileMarker.PRF_CORE_TOTAL_CALL_PER_SEC] = float(performance['performance'])    # ok
-        out[FileMarker.PRF_CORE_AVRG_TIME] = float(performance['avrg'])                    # ok
-        out[FileMarker.PRF_CORE_STD_DEVIATION] = 0                                         # ok
-
-        # final dump
-        output.print(f"  {dumps(out)}")

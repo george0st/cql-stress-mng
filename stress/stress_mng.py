@@ -286,12 +286,12 @@ def summary(dir):
     summary.save_json()
     comp = StressCompare(path.join(dir, "extract"))
     comp.add_default("LOCAL_ONE")
-    comp.run()
+    comp.text()
     comp.graph(path.join(dir, "graph"))
-    print("==============================")
-    comp.add_default("LOCAL_ONE")
-    comp.run()
-    comp.graph()
+    print("====================================")
+    comp.add_default("LOCAL_QUORUM")
+    comp.text()
+    comp.graph(path.join(dir, "graph"))
 
 @click.group()
 def run_group():
