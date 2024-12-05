@@ -6,7 +6,7 @@ Key benefits:
  - generation scripts for 'cassandra-stress'
  - remove keyspace/table remove from CQL
  - generate test summaries
- - compare test results 
+ - compare test results
  - generate graphs
 
 Pre-requisites:
@@ -17,8 +17,23 @@ Pre-requisites:
 
 ## Usage
 
+You can see description, see standard commandline: 
+```sh
+python3.11 stress/stress_mng.py --help
+
+Usage: stress_mng.py [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  extract   Extract data from 'cassandra-stress' output to the CSV or TXT
+  generate  Generate performance tests as *.sh for 'cassandra-stress'
+  remove    Remove keyspace or table from CQL solution
+  version   Print current version of key components
+```
 #### Generate scripts for cassandra-stress
-```python
+```sh
 
 ```
 
