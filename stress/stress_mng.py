@@ -281,12 +281,16 @@ def extract_group():
 
 @extract_group.command()
 @click.option("-d", "--dir", help="directory with particular items (default './stress_output/')", default="./stress_output/")
-def extract(dir):
-    """Extract data from 'cassandra-stress' output to the CSV or TXT"""
+@click.option("-c", "--csv", help="generate output in CSV form (default 'True')", default="True")
+@click.option("-t", "--txt", help="generate output in TXT form (default 'True')", default="True")
+def extract(dir, csv, txt):
+    """Extract data from 'cassandra-stress' output to the CSV and TXT"""
     summary = ExtractSummary(dir, path.join(dir, "extract"))
     summary.parse()
-    summary.save_csv()
-    summary.save_json()
+    if helper.str2bool(csv):
+        summary.save_csv()
+    if helper.str2bool(txt):
+        summary.save_json()
 
     comp = StressCompare(path.join(dir, "extract"))
     comp.add_default("LOCAL_ONE")

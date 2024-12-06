@@ -34,6 +34,9 @@ Commands:
 ```
 
 ### 1. Generate
+
+The generation of shell scripts.
+
 #### 1.1 Generate shell script based on 'compareV4V5_separateTHR\_cass_*.env'
 
 ```sh
@@ -64,6 +67,7 @@ echo 'START write, 64x thread: 5/5...'
 
 ```
 #### 1.2 Generate shell scripts based on 'compareV4V5_sequenceTHR\_cass_*.env'
+
 ```sh
 python3.11 stress/stress_mng.py generate -e compareV4V5_sequenceTHR\_cass_*.env -l stress-cmd/_cass_seq_all.sh
 ```
@@ -87,9 +91,13 @@ echo 'START read, 100x thread: 2/1...'
 ./apache-cassandra-5.0.2/tools/bin/cassandra-stress read duration=1m cl=LOCAL_ONE no-warmup -node 10.129.52.58,10.129.53.21,10.129.52.57 -mode user=perf password=perf prepared protocolVersion=4 connectionsPerHost=24 maxPending=384 -rate "threads<=100" -reporting output-frequency=5s > "./stress-output/$curr_date/$curr_date v4 read_LOCAL_ONE_LCS_100xTHR.txt"
 ```
 ### 2. Extract
-#### 2.2 Extract from 'cassandra-stress' output
-TBD.
 
+The extract data from cassandra-stress output in format CSV and TXT.
+
+#### 2.2 Extract from 'cassandra-stress' output
+
+
+extract -d "C:/Python/.NEW Compare V4 vs V5/FULLFinal/"
 
 ## Sample of outputs
 #### Performance/Throughput & Response time
