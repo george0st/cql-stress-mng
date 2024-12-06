@@ -8,7 +8,7 @@ from json import dumps
 from cql_helper import get_readable_duration, to_seconds
 from graph_output import GraphOutput
 
-class StressSummary:
+class ExtractSummary:
     """ Generate summary outputs from particular tests (a lot of detail outputs).
         The outputs are in json, txt, csv formats
     """

@@ -1,7 +1,7 @@
 from cql_access import CQLAccess
 from cql_config import CQLConfig
 from cql_output import CQLOutput
-from stress_summary import StressSummary
+from extract_summary import ExtractSummary
 from stress_compare import StressCompare
 from colorama import Fore, Style
 import cql_helper as helper
@@ -225,12 +225,13 @@ def remove_group():
     pass
 
 @remove_group.command()
-@click.option("-e", "--env", help="name of ENV file (default '_cass.env')", default="_cass.env")
-@click.option("-d", "--perf_dir", help="directory with perf_cql (default '.')", default=".")
-@click.option("-k", "--keyspace", help="remove keyspace", default="")
-@click.option("-t", "--table", help="remove table in specific keyspace (if table is empty, that remove whole keyspace)", default="")
-@click.option("-s", "--sleep", help="sleep time in seconds", default="5")
+@click.option("-e", "--env", help="name of ENV file in config subdirectory (default '_cass.env')", default="_cass.env")
+@click.option("-d", "--perf_dir", help="directory with stress tool (default '.')", default=".")
+@click.option("-k", "--keyspace", help="name of keyspace for remove", default="")
+@click.option("-t", "--table", help="name of table in specific keyspace for remove (if table is empty, the whole keyspace will be removed)", default="")
+@click.option("-s", "--sleep", help="sleep time in seconds after remove (default 5)", default="5")
 def remove(env, perf_dir, keyspace, table, sleep):
+    """Remove keyspace or table from CQL solution"""
     for file in glob(path.join(perf_dir, "config", env)):
         params = CQLConfig(perf_dir).get_global_params(file)
 
@@ -250,9 +251,10 @@ def version_group():
 
 @version_group.command()
 def version():
-    """Versions of key components."""
+    """Print current version of key components"""
     from cassandra import __version__ as cassandra_version
-    from polars import __version__ as polars_verion
+    from polars import __version__ as polars_version
+    from qgate_graph import __version__ as qgate_graph_version
     from prettytable import PrettyTable
     import version
     import sys
@@ -267,23 +269,29 @@ def version():
     table.align = "l"
 
     table.add_row([Fore.LIGHTRED_EX + "stress"+ Style.RESET_ALL, Fore.LIGHTRED_EX + version.__version__+Style.RESET_ALL])
-    table.add_row(["polars", polars_verion])
+    table.add_row(["polars", polars_version])
+    table.add_row(["qgate_graph", qgate_graph_version])
     table.add_row(["cassandra-driver", cassandra_version])
     table.add_row(["python", sys.version])
     print(table)
 
 @click.group()
-def summary_group():
+def extract_group():
     pass
 
-@summary_group.command()
+@extract_group.command()
 @click.option("-d", "--dir", help="directory with particular items (default './stress_output/')", default="./stress_output/")
-def summary(dir):
-    """Run performance tests based on ENV file(s)."""
-    summary=StressSummary(dir, path.join(dir, "extract"))
+@click.option("-c", "--csv", help="generate output in CSV form (default 'True')", default="True")
+@click.option("-t", "--txt", help="generate output in TXT form (default 'True')", default="True")
+def extract(dir, csv, txt):
+    """Extract data from 'cassandra-stress' output to the CSV and TXT"""
+    summary = ExtractSummary(dir, path.join(dir, "extract"))
     summary.parse()
-    summary.save_csv()
-    summary.save_json()
+    if helper.str2bool(csv):
+        summary.save_csv()
+    if helper.str2bool(txt):
+        summary.save_json()
+
     comp = StressCompare(path.join(dir, "extract"))
     comp.add_default("LOCAL_ONE")
     comp.text()
@@ -294,18 +302,18 @@ def summary(dir):
     comp.graph(path.join(dir, "graph"))
 
 @click.group()
-def run_group():
+def generate_group():
     pass
 
-@run_group.command()
+@generate_group.command()
 @click.option("-e", "--env", help="name of ENV file (default '_cass.env')", default="_cass.env")
 @click.option("-d", "--perf_dir", help="directory with perf_cql (default '.')", default=".")
 @click.option("-l", "--log", help="output (default 'stress-run.sh')", default="stress-run.sh")
-def run(env, perf_dir, log):
-    """Run performance tests based on ENV file(s)."""
+def generate(env, perf_dir, log):
+    """Generate performance tests as *.sh for 'cassandra-stress'"""
     main_execute(env, perf_dir, log)
 
-cli = click.CommandCollection(sources=[run_group, remove_group, summary_group, version_group])
+cli = click.CommandCollection(sources=[generate_group, remove_group, extract_group, version_group])
 
 if __name__ == '__main__':
     cli()
