@@ -298,18 +298,28 @@ def compare_group():
 
 @extract_group.command()
 @click.option("-d", "--dir", help="directory with particular items (default './stress_output/')", default="./stress_output/")
-@click.option("-c", "--csv", help="generate output in CSV form (default 'True')", default="True")
-@click.option("-t", "--txt", help="generate output in TXT form (default 'True')", default="True")
-def compare(dir, csv, txt):
+@click.option("-c", "--console", help="compare output to the console (default 'True')", default="True")
+@click.option("-g", "--graph", help="compare output to the sub-directory 'graph'  form (default 'graph')", default="graph")
+def compare(dir, console, graph):
     """Compare data from TXT(JSON) to the sub-dir 'extract'"""
     comp = StressCompare(path.join(dir, "extract"))
-    comp.add_default("LOCAL_ONE")
-    comp.text()
-    comp.graph(path.join(dir, "graph"))
-    print("====================================")
-    comp.add_default("LOCAL_QUORUM")
-    comp.text()
-    comp.graph(path.join(dir, "graph"))
+
+    compact_level = "LOCAL_ONE"
+    print(f"==== {compact_level}===")
+    comp.add_default(compact_level)
+    if helper.str2bool(console):
+        comp.text()
+    if len(graph) > 0:
+        comp.graph(path.join(dir, graph))
+
+    compact_level = "LOCAL_QUORUM"
+    print(f"==== {compact_level}===")
+    comp.add_default(compact_level)
+    comp.add_default(compact_level)
+    if helper.str2bool(console):
+        comp.text()
+    if len(graph) > 0:
+        comp.graph(path.join(dir, graph))
 
 
 @click.group()
