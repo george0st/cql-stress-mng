@@ -284,7 +284,7 @@ def extract_group():
 @click.option("-c", "--csv", help="generate output in CSV form (default 'True')", default="True")
 @click.option("-t", "--txt", help="generate output in TXT form (default 'True')", default="True")
 def extract(dir, csv, txt):
-    """Extract data from 'cassandra-stress' output to the CSV and TXT(JSON)"""
+    """Extract data from 'cassandra-stress' output to the sub-dir 'extract' in CSV and TXT(JSON)"""
     summary = ExtractSummary(dir, path.join(dir, "extract"))
     summary.parse()
     if helper.str2bool(csv):
@@ -301,7 +301,7 @@ def compare_group():
 @click.option("-c", "--csv", help="generate output in CSV form (default 'True')", default="True")
 @click.option("-t", "--txt", help="generate output in TXT form (default 'True')", default="True")
 def compare(dir, csv, txt):
-    """Compare data from TXT(JSON) form based on requested tests"""
+    """Compare data from TXT(JSON) to the sub-dir 'extract'"""
     comp = StressCompare(path.join(dir, "extract"))
     comp.add_default("LOCAL_ONE")
     comp.text()
