@@ -284,7 +284,7 @@ def extract_group():
 @click.option("-c", "--csv", help="generate output in CSV form (default 'True')", default="True")
 @click.option("-t", "--txt", help="generate output in TXT form (default 'True')", default="True")
 def extract(dir, csv, txt):
-    """Extract data from 'cassandra-stress' output to the CSV and TXT"""
+    """Extract data from 'cassandra-stress' output to the sub-dir 'extract' in CSV and TXT(JSON)"""
     summary = ExtractSummary(dir, path.join(dir, "extract"))
     summary.parse()
     if helper.str2bool(csv):
@@ -292,14 +292,35 @@ def extract(dir, csv, txt):
     if helper.str2bool(txt):
         summary.save_json()
 
+@click.group()
+def compare_group():
+    pass
+
+@compare_group.command()
+@click.option("-d", "--dir", help="directory with particular items (default './stress_output/')", default="./stress_output/")
+@click.option("-c", "--console", help="compare output to the console (default 'True')", default="True")
+@click.option("-g", "--graph", help="compare output to the sub-directory 'graph'  form (default 'graph')", default="graph")
+def compare(dir, console, graph):
+    """Compare data from TXT(JSON) to the sub-dir 'graph'"""
     comp = StressCompare(path.join(dir, "extract"))
-    comp.add_default("LOCAL_ONE")
-    comp.text()
-    comp.graph(path.join(dir, "graph"))
-    print("====================================")
-    comp.add_default("LOCAL_QUORUM")
-    comp.text()
-    comp.graph(path.join(dir, "graph"))
+
+    compact_level = "LOCAL_ONE"
+    print(f"==== {compact_level}===")
+    comp.add_default(compact_level)
+    if helper.str2bool(console):
+        comp.text()
+    if len(graph) > 0:
+        comp.graph(path.join(dir, graph))
+
+    compact_level = "LOCAL_QUORUM"
+    print(f"==== {compact_level}===")
+    comp.add_default(compact_level)
+    comp.add_default(compact_level)
+    if helper.str2bool(console):
+        comp.text()
+    if len(graph) > 0:
+        comp.graph(path.join(dir, graph))
+
 
 @click.group()
 def generate_group():
@@ -313,7 +334,7 @@ def generate(env, perf_dir, log):
     """Generate performance tests as *.sh for 'cassandra-stress'"""
     main_execute(env, perf_dir, log)
 
-cli = click.CommandCollection(sources=[generate_group, remove_group, extract_group, version_group])
+cli = click.CommandCollection(sources=[generate_group, remove_group, extract_group, compare_group, version_group])
 
 if __name__ == '__main__':
     cli()

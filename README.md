@@ -27,7 +27,8 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  extract   Extract data from 'cassandra-stress' output to the CSV or TXT
+  compare   Compare data from TXT(JSON) to the sub-dir 'extract'
+  extract   Extract data from 'cassandra-stress' output to the sub-dir...
   generate  Generate performance tests as *.sh for 'cassandra-stress'
   remove    Remove keyspace or table from CQL solution
   version   Print current version of key components
@@ -92,12 +93,25 @@ echo 'START read, 100x thread: 2/1...'
 ```
 ### 2. Extract
 
-The extract data from cassandra-stress output in format CSV and TXT.
+The extract data from cassandra-stress output in format CSV and TXT(JSON).
 
-#### 2.2 Extract from 'cassandra-stress' output
+#### 2.1 Extract from 'cassandra-stress' output
 
-
+```sh
 extract -d "C:/Python/.NEW Compare V4 vs V5/FULLFinal/"
+```
+
+### 3. Compare
+
+The Compare data from TXT(JSON) to the console and as graphs to the sub-dir 'graph'
+
+#### 3.1 Compare
+
+```sh
+compare -d "C:/Python/.NEW Compare V4 vs V5/FULLFinal/"
+```
+
+
 
 ## Sample of outputs
 #### Performance/Throughput & Response time
