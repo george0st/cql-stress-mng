@@ -18,6 +18,7 @@ class ExtractSummary:
         self._output_dir = output_dir
         self._file_extension = file_extension
         self._performance = {}
+        self._output_sample = 2
 
     def _parse_results(self, file_name, content):
         results=[]
@@ -112,7 +113,11 @@ class ExtractSummary:
         # iteration cross all files
         filter=path.join(self._input_dir, self._file_extension)
         for file_name in glob(filter):
-            print(f"Processing: '{path.basename(file_name)}'")
+            if count < self._output_sample:
+                print(f"Parsing: '{path.basename(file_name)}'")
+            else:
+                if count == self._output_sample:
+                    print("Parsing ...")
 
             content=helper.read_file_all(file_name)
             if self._multi_result(content):
@@ -134,7 +139,6 @@ class ExtractSummary:
         for key in self._performance.keys():
             output = None
             file_name = key + ".csv"
-            count += 1
             try:
                 output = CQLOutput(self._output_dir, file_name, False)
                 output.open()
@@ -152,7 +156,13 @@ class ExtractSummary:
             finally:
                 if output:
                     output.close()
-            print(f"Saved CSV: '{file_name}'")
+            if count < self._output_sample:
+                print(f"Saved CSV: '{file_name}'")
+            else:
+                if count == self._output_sample:
+                    print("Saved CSV ...")
+            count += 1
+
         print(f"=== Saved '{count}' CSV files ===")
 
     def _to_datetime(self, label) -> datetime:
@@ -167,7 +177,6 @@ class ExtractSummary:
         for key in self._performance.keys():
             output = None
             file_name = key + ".txt"
-            count += 1
             try:
                 output = CQLOutput(self._output_dir, file_name, False)
                 graph = GraphOutput(output)
@@ -186,5 +195,11 @@ class ExtractSummary:
             finally:
                 if output:
                     output.close()
-            print(f"Saved TXT(JSON): '{file_name}'")
+
+            if count < self._output_sample:
+                print(f"Saved TXT(JSON): '{file_name}'")
+            else:
+                if count == self._output_sample:
+                    print("Saved TXT(JSON) ...")
+            count += 1
         print(f"=== Saved '{count}' TXT(JSON) files ===")
