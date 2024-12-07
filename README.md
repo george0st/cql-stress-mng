@@ -1,6 +1,7 @@
 # cql-stress-mng
 An easy management of CQL stress tests with the official 'cassandra-stress' tool. You can use
-the solution for tests not only cassandra, but also Scylla and AstraDB.
+the solution for tests not only cassandra, but also other solutions with support CQL such as
+Scylla, AstraDB, etc.
 
 Key benefits:
  - **generate** scripts for performance tests (with 'cassandra-stress')
@@ -16,6 +17,11 @@ Pre-requisites:
    - open port 9042
    - IP addresses for connection
    - login information e.g. username/password
+
+Motivation:
+ - use a standard and verified official tool for testing
+ - don't reinvent the wheel (unless necessary)
+ - focus on own tests (not the test tooling)
 
 ## 1. Command line usage
 
@@ -113,6 +119,7 @@ compare -d "C:/Python/.NEW Compare V4 vs V5/FULLFinal/"
 ## 2. Sample of outputs
 #### Compare as graph (Performance/Throughput & Response time)
 ![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/PRF-v4_vs_v5_read_LOCAL_ONE_LCS-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
+
 ![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/PRF-v4_vs_v5_write_LOCAL_ONE_STCS-UCS8-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
 
 
