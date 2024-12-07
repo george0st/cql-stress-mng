@@ -107,28 +107,36 @@ class ExtractSummary:
         """Parse input"""
         self._performance = {}
         items=[]
-        # iteration cross all files
+        count=0
 
+        # iteration cross all files
         filter=path.join(self._input_dir, self._file_extension)
         for file_name in glob(filter):
-            print("Processing:",file_name)
+            print(f"Processing: '{path.basename(file_name)}'")
 
             content=helper.read_file_all(file_name)
             if self._multi_result(content):
                 self._parse_results(path.basename(file_name), content)
             else:
                 self._parse_result(path.basename(file_name), content)
+            count += 1
 
         # order by amount of executors
         for key in self._performance.keys():
             self._performance[key].sort(key=self._sort_executors)
 
+        print(f"=== Parsed '{count}' files ===")
+
+
     def save_csv(self):
         """Save summary output to CSV file"""
+        count = 0
         for key in self._performance.keys():
             output = None
+            file_name = key + ".csv"
+            count += 1
             try:
-                output = CQLOutput(self._output_dir, key + ".csv", False)
+                output = CQLOutput(self._output_dir, file_name, False)
                 output.open()
                 output.print("Executors,Group,Performance,Avrg,Latency 95th,Latency 99th,Latency 999th,Max")
 
@@ -144,6 +152,8 @@ class ExtractSummary:
             finally:
                 if output:
                     output.close()
+            print(f"Saved CSV: '{file_name}'")
+        print(f"=== Saved '{count}' CSV files ===")
 
     def _to_datetime(self, label) -> datetime:
         keys = label.split()
@@ -152,10 +162,14 @@ class ExtractSummary:
 
     def save_json(self):
         """Save summary output to TXT (JSON) file"""
+
+        count = 0
         for key in self._performance.keys():
             output = None
+            file_name = key + ".txt"
+            count += 1
             try:
-                output = CQLOutput(self._output_dir, key + ".txt", False)
+                output = CQLOutput(self._output_dir, file_name, False)
                 graph = GraphOutput(output)
                 output.open()
 
@@ -172,3 +186,5 @@ class ExtractSummary:
             finally:
                 if output:
                     output.close()
+            print(f"Saved TXT(JSON): '{file_name}'")
+        print(f"=== Saved '{count}' TXT(JSON) files ===")
