@@ -296,12 +296,12 @@ def extract(dir, csv, txt):
 def compare_group():
     pass
 
-@extract_group.command()
+@compare_group.command()
 @click.option("-d", "--dir", help="directory with particular items (default './stress_output/')", default="./stress_output/")
 @click.option("-c", "--console", help="compare output to the console (default 'True')", default="True")
 @click.option("-g", "--graph", help="compare output to the sub-directory 'graph'  form (default 'graph')", default="graph")
 def compare(dir, console, graph):
-    """Compare data from TXT(JSON) to the sub-dir 'extract'"""
+    """Compare data from TXT(JSON) to the sub-dir 'graph'"""
     comp = StressCompare(path.join(dir, "extract"))
 
     compact_level = "LOCAL_ONE"
@@ -334,7 +334,7 @@ def generate(env, perf_dir, log):
     """Generate performance tests as *.sh for 'cassandra-stress'"""
     main_execute(env, perf_dir, log)
 
-cli = click.CommandCollection(sources=[generate_group, remove_group, extract_group, version_group])
+cli = click.CommandCollection(sources=[generate_group, remove_group, extract_group, compare_group, version_group])
 
 if __name__ == '__main__':
     cli()
