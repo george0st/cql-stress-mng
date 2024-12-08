@@ -4,6 +4,10 @@
 # Run without terminal
 ###########################
 
+python3.11 stress/stress_mng.py generate -e private/zeebe/_cass_*.env -l ../_zeebe_all.sh -d stress
+
+./_zeebe_all.sh
+
 # Mains for 'compareV4V5_sequenceTHR'
 python3.11 stress/stress_mng.py run -e compareV4V5_sequenceTHR/_cass_v4_*.env -l ../_cass_seq_v4.sh -d stress
 python3.11 stress/stress_mng.py run -e compareV4V5_sequenceTHR/_cass_v5_*.env -l ../_cass_seq_v5.sh -d stress

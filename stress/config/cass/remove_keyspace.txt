@@ -1,1 +1,1 @@
-python3.11 stress/stress_mng.py remove -e %ENV% -k keyspace1 -d stress -s 8
+python3.11 stress/stress_mng.py remove -e %ENV% -k keyspace1 -d stress -s 10
