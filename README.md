@@ -118,11 +118,11 @@ compare -d "C:/Python/.NEW Compare V4 vs V5/FULLFinal/"
 
 It is useful for visual check, the inputs are TXT(JSON) files from extract command.
 
-![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/PRF-v4_vs_v5_read_LOCAL_ONE_LCS-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
+![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/assets/PRF-v4_vs_v5_read_LOCAL_ONE_LCS-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
 
-![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/PRF-v4_vs_v5_write_LOCAL_ONE_STCS-UCS8-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
+![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/assets/PRF-v4_vs_v5_write_LOCAL_ONE_STCS-UCS8-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
 
-![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/PRF-v4_vs_v5_write_LOCAL_QUORUM_STCS-UCS8-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
+![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/assets/PRF-v4_vs_v5_write_LOCAL_QUORUM_STCS-UCS8-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
 
 #### 2.2 Compare as text
 
@@ -143,8 +143,8 @@ v4 write_LOCAL_QUORUM_STCS	3525	6394	10804	14313	18465	22709	25715	1,1	1,2	1,5	1
 
 The usage in the excel see a few final outputs:
 
-![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/r2-local_quorum.png?raw=true)
+![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/assets/r2-local_quorum.png?raw=true)
 
-![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/r3-local_quorum.png?raw=true)
+![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/assets/r3-local_quorum.png?raw=true)
 
-![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/final-local_quorum.png?raw=true)
+![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/assets/final-local_quorum.png?raw=true)
