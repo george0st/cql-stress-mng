@@ -4,14 +4,14 @@ the solution for tests not only cassandra, but also other solutions with support
 Scylla, AstraDB, etc.
 
 Key benefits:
- - **generate** scripts for performance tests (with 'cassandra-stress')
+ - **generate** scripts for performance tests (with 'cassandra-stress') based on templates
  - **extract** test summaries (from 'cassandra-stress' results)
- - **compare** test results (as text tables and graphs)
- - support cleaning (ability to remove keyspace/table via CQL)
+ - **compare** test results (as text tables and/or graphs)
+ - test cleaning/maintenance (ability to remove keyspace/table via CQL)
 
 Pre-requisites:
  - installed Python >= 3.11
- - installed Java (based on support version in cassandra-stress)
+ - installed Java (java version based on cassandra-stress specification)
  - installed 'cassandra-stress' tool (part of Apache Cassandra distribution)
  - access to CQL solution (e.g. Cassandra, Scylla, Astra, etc.)
    - open port 9042
@@ -26,9 +26,11 @@ Motivation for this tool/repo:
 ## 1. Command line usage
 
 You can see standard description: 
+
 ```sh
 python3.11 stress/stress_mng.py --help
-
+```
+```txt
 Usage: stress_mng.py [OPTIONS] COMMAND [ARGS]...
 
 Options:
@@ -68,7 +70,7 @@ echo 'START write, 4x thread: 1/1...'
 echo 'START write, 8x thread: 2/2...'
 ./apache-cassandra-5.0.2/tools/bin/cassandra-stress write duration=1m cl=LOCAL_ONE no-warmup -node 10.129.52.58,10.129.53.21,10.129.52.57 -mode user=perf password=perf prepared protocolVersion=4 connectionsPerHost=24 maxPending=384 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=LeveledCompactionStrategy,sstable_size_in_mb=160,fanout_size=10)" -rate "threads=8" -reporting output-frequency=5s > "./stress-output/$curr_date/$curr_date v4 write_LOCAL_ONE_LCS_8xTHR.txt"
 echo 'START write, 16x thread: 3/3...'
-...
+rem ...
 ```
 #### 1.1.2 Generate shell scripts based on 'compareV4V5_sequenceTHR\_cass_*.env'
 
@@ -93,7 +95,7 @@ echo 'START write, 100x thread: 1/1...'
 
 echo 'START read, 100x thread: 2/1...'
 ./apache-cassandra-5.0.2/tools/bin/cassandra-stress read duration=1m cl=LOCAL_ONE no-warmup -node 10.129.52.58,10.129.53.21,10.129.52.57 -mode user=perf password=perf prepared protocolVersion=4 connectionsPerHost=24 maxPending=384 -rate "threads<=100" -reporting output-frequency=5s > "./stress-output/$curr_date/$curr_date v4 read_LOCAL_ONE_LCS_100xTHR.txt"
-...
+rem ...
 ```
 ### 1.2 Extract
 
@@ -112,7 +114,7 @@ compare -d "C:/Python/.NEW Compare V4 vs V5/FULLFinal/"
 ```
 
 ## 2. Sample of outputs
-#### 2.1 Compare as graph (Performance & Response time)
+#### 2.1 Compare as graph
 
 It is useful for visual check, the inputs are TXT(JSON) files from extract command.
 
@@ -122,11 +124,11 @@ It is useful for visual check, the inputs are TXT(JSON) files from extract comma
 
 ![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/PRF-v4_vs_v5_write_LOCAL_QUORUM_STCS-UCS8-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
 
-#### 2.2 Compare as text (Performance & Response time)
+#### 2.2 Compare as text
 
 It is useful for table/excel compare (TAB as separator), the inputs are CSV files from extract command.
 
-```sh
+```txt
 ==== LOCAL_ONE===
 Test case	4	8	16	24	36	54	81	4	8	16	24	36	54	81
 v5 write_LOCAL_ONE_STCS	5938	11451	21774	29310	35638	39116	42557	0,7	0,7	0,7	0,8	1,0	1,4	1,9
