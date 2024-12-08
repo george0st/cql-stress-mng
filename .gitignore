@@ -163,3 +163,4 @@ cython_debug/
 /secrets/
 /secrets
 /stress/config/private/
+/stress/stress-cmd/private/
