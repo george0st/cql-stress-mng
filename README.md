@@ -112,7 +112,7 @@ compare -d "C:/Python/.NEW Compare V4 vs V5/FULLFinal/"
 ```
 
 ## 2. Sample of outputs
-#### 2.1 Compare as graph (Performance & Response time)
+#### 2.1 Compare as graph
 
 It is useful for visual check, the inputs are TXT(JSON) files from extract command.
 
@@ -122,7 +122,7 @@ It is useful for visual check, the inputs are TXT(JSON) files from extract comma
 
 ![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/PRF-v4_vs_v5_write_LOCAL_QUORUM_STCS-UCS8-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
 
-#### 2.2 Compare as text (Performance & Response time)
+#### 2.2 Compare as text
 
 It is useful for table/excel compare (TAB as separator), the inputs are CSV files from extract command.
 
