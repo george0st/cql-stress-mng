@@ -86,8 +86,6 @@ class StressCompare:
         new_row = new_row[:-1]
         new_row += "\n"
 
-        # calc percentiges
-
         if old_executors != new_executors:
             print("!!! DIFFERENT EXECUTORS !!!!")
         return new_row.replace(".",",").replace(" ms",""), new_executors
