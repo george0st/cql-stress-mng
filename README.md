@@ -1,6 +1,7 @@
 # cql-stress-mng
 An easy management of CQL stress tests with the official 'cassandra-stress' tool. You can use
-the solution for tests not only cassandra, but also Scylla and AstraDB.
+the solution for tests not only cassandra, but also other solutions with support CQL such as
+Scylla, AstraDB, etc.
 
 Key benefits:
  - **generate** scripts for performance tests (with 'cassandra-stress')
@@ -16,6 +17,11 @@ Pre-requisites:
    - open port 9042
    - IP addresses for connection
    - login information e.g. username/password
+
+Motivation for this tool/repo:
+ - use the standard and verified official tool for testing CQL solutions
+ - focus on your own tests (not on creating a tool for performance tests)
+ - don't reinvent the wheel (unless necessary, the time is money)
 
 ## 1. Command line usage
 
@@ -62,11 +68,6 @@ echo 'START write, 4x thread: 1/1...'
 echo 'START write, 8x thread: 2/2...'
 ./apache-cassandra-5.0.2/tools/bin/cassandra-stress write duration=1m cl=LOCAL_ONE no-warmup -node 10.129.52.58,10.129.53.21,10.129.52.57 -mode user=perf password=perf prepared protocolVersion=4 connectionsPerHost=24 maxPending=384 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=LeveledCompactionStrategy,sstable_size_in_mb=160,fanout_size=10)" -rate "threads=8" -reporting output-frequency=5s > "./stress-output/$curr_date/$curr_date v4 write_LOCAL_ONE_LCS_8xTHR.txt"
 echo 'START write, 16x thread: 3/3...'
-./apache-cassandra-5.0.2/tools/bin/cassandra-stress write duration=1m cl=LOCAL_ONE no-warmup -node 10.129.52.58,10.129.53.21,10.129.52.57 -mode user=perf password=perf prepared protocolVersion=4 connectionsPerHost=24 maxPending=384 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=LeveledCompactionStrategy,sstable_size_in_mb=160,fanout_size=10)" -rate "threads=16" -reporting output-frequency=5s > "./stress-output/$curr_date/$curr_date v4 write_LOCAL_ONE_LCS_16xTHR.txt"
-echo 'START write, 32x thread: 4/4...'
-./apache-cassandra-5.0.2/tools/bin/cassandra-stress write duration=1m cl=LOCAL_ONE no-warmup -node 10.129.52.58,10.129.53.21,10.129.52.57 -mode user=perf password=perf prepared protocolVersion=4 connectionsPerHost=24 maxPending=384 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=LeveledCompactionStrategy,sstable_size_in_mb=160,fanout_size=10)" -rate "threads=32" -reporting output-frequency=5s > "./stress-output/$curr_date/$curr_date v4 write_LOCAL_ONE_LCS_32xTHR.txt"
-echo 'START write, 64x thread: 5/5...'
-./apache-cassandra-5.0.2/tools/bin/cassandra-stress write duration=1m cl=LOCAL_ONE no-warmup -node 10.129.52.58,10.129.53.21,10.129.52.57 -mode user=perf password=perf prepared protocolVersion=4 connectionsPerHost=24 maxPending=384 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=LeveledCompactionStrategy,sstable_size_in_mb=160,fanout_size=10)" -rate "threads=64" -reporting output-frequency=5s > "./stress-output/$curr_date/$curr_date v4 write_LOCAL_ONE_LCS_64xTHR.txt"
 ...
 ```
 #### 1.1.2 Generate shell scripts based on 'compareV4V5_sequenceTHR\_cass_*.env'
@@ -111,8 +112,37 @@ compare -d "C:/Python/.NEW Compare V4 vs V5/FULLFinal/"
 ```
 
 ## 2. Sample of outputs
-#### Compare as graph (Performance/Throughput & Response time)
+#### 2.1 Compare as graph (Performance & Response time)
+
+It is useful for visual check, the inputs are TXT(JSON) files from extract command.
+
 ![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/PRF-v4_vs_v5_read_LOCAL_ONE_LCS-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
+
 ![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/PRF-v4_vs_v5_write_LOCAL_ONE_STCS-UCS8-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
 
+![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/PRF-v4_vs_v5_write_LOCAL_QUORUM_STCS-UCS8-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
 
+#### 2.2 Compare as text (Performance & Response time)
+
+It is useful for table/excel compare (TAB as separator), the inputs are CSV files from extract command.
+
+```sh
+==== LOCAL_ONE===
+Test case	4	8	16	24	36	54	81	4	8	16	24	36	54	81
+v5 write_LOCAL_ONE_STCS	5938	11451	21774	29310	35638	39116	42557	0,7	0,7	0,7	0,8	1,0	1,4	1,9
+v4 write_LOCAL_ONE_STCS	5874	11053	19690	26178	30213	28000	23091	0,7	0,7	0,8	0,9	1,2	1,9	3,4
+...
+==== LOCAL_QUORUM===
+Test case	4	8	16	24	36	54	81	4	8	16	24	36	54	81
+v5 write_LOCAL_QUORUM_STCS	3907	7058	12638	18065	23462	29958	32159	1,0	1,1	1,2	1,3	1,5	1,8	2,5
+v4 write_LOCAL_QUORUM_STCS	3525	6394	10804	14313	18465	22709	25715	1,1	1,2	1,5	1,7	1,9	2,4	3,1
+...
+```
+
+The usage in the excel see a few final outputs:
+
+![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/r2-local_quorum.png?raw=true)
+
+![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/r3-local_quorum.png?raw=true)
+
+![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/final-local_quorum.png?raw=true)
