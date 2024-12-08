@@ -126,7 +126,7 @@ It is useful for visual check, the inputs are TXT(JSON) files from extract comma
 
 It is useful for table/excel compare (TAB as separator), the inputs are CSV files from extract command.
 
-```sh
+```txt
 ==== LOCAL_ONE===
 Test case	4	8	16	24	36	54	81	4	8	16	24	36	54	81
 v5 write_LOCAL_ONE_STCS	5938	11451	21774	29310	35638	39116	42557	0,7	0,7	0,7	0,8	1,0	1,4	1,9
