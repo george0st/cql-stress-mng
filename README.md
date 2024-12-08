@@ -68,11 +68,6 @@ echo 'START write, 4x thread: 1/1...'
 echo 'START write, 8x thread: 2/2...'
 ./apache-cassandra-5.0.2/tools/bin/cassandra-stress write duration=1m cl=LOCAL_ONE no-warmup -node 10.129.52.58,10.129.53.21,10.129.52.57 -mode user=perf password=perf prepared protocolVersion=4 connectionsPerHost=24 maxPending=384 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=LeveledCompactionStrategy,sstable_size_in_mb=160,fanout_size=10)" -rate "threads=8" -reporting output-frequency=5s > "./stress-output/$curr_date/$curr_date v4 write_LOCAL_ONE_LCS_8xTHR.txt"
 echo 'START write, 16x thread: 3/3...'
-./apache-cassandra-5.0.2/tools/bin/cassandra-stress write duration=1m cl=LOCAL_ONE no-warmup -node 10.129.52.58,10.129.53.21,10.129.52.57 -mode user=perf password=perf prepared protocolVersion=4 connectionsPerHost=24 maxPending=384 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=LeveledCompactionStrategy,sstable_size_in_mb=160,fanout_size=10)" -rate "threads=16" -reporting output-frequency=5s > "./stress-output/$curr_date/$curr_date v4 write_LOCAL_ONE_LCS_16xTHR.txt"
-echo 'START write, 32x thread: 4/4...'
-./apache-cassandra-5.0.2/tools/bin/cassandra-stress write duration=1m cl=LOCAL_ONE no-warmup -node 10.129.52.58,10.129.53.21,10.129.52.57 -mode user=perf password=perf prepared protocolVersion=4 connectionsPerHost=24 maxPending=384 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=LeveledCompactionStrategy,sstable_size_in_mb=160,fanout_size=10)" -rate "threads=32" -reporting output-frequency=5s > "./stress-output/$curr_date/$curr_date v4 write_LOCAL_ONE_LCS_32xTHR.txt"
-echo 'START write, 64x thread: 5/5...'
-./apache-cassandra-5.0.2/tools/bin/cassandra-stress write duration=1m cl=LOCAL_ONE no-warmup -node 10.129.52.58,10.129.53.21,10.129.52.57 -mode user=perf password=perf prepared protocolVersion=4 connectionsPerHost=24 maxPending=384 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=LeveledCompactionStrategy,sstable_size_in_mb=160,fanout_size=10)" -rate "threads=64" -reporting output-frequency=5s > "./stress-output/$curr_date/$curr_date v4 write_LOCAL_ONE_LCS_64xTHR.txt"
 ...
 ```
 #### 1.1.2 Generate shell scripts based on 'compareV4V5_sequenceTHR\_cass_*.env'
@@ -136,16 +131,10 @@ It is useful for table/excel compare (TAB as separator), the inputs are CSV file
 Test case	4	8	16	24	36	54	81	4	8	16	24	36	54	81
 v5 write_LOCAL_ONE_STCS	5938	11451	21774	29310	35638	39116	42557	0,7	0,7	0,7	0,8	1,0	1,4	1,9
 v4 write_LOCAL_ONE_STCS	5874	11053	19690	26178	30213	28000	23091	0,7	0,7	0,8	0,9	1,2	1,9	3,4
-
-v5 write_LOCAL_ONE_UCS4	6390	12212	22044	30808	37429	40501	42901	0,6	0,6	0,7	0,8	0,9	1,3	1,9
-v4 write_LOCAL_ONE_STCS	5874	11053	19690	26178	30213	28000	23091	0,7	0,7	0,8	0,9	1,2	1,9	3,4
 ...
 ==== LOCAL_QUORUM===
 Test case	4	8	16	24	36	54	81	4	8	16	24	36	54	81
 v5 write_LOCAL_QUORUM_STCS	3907	7058	12638	18065	23462	29958	32159	1,0	1,1	1,2	1,3	1,5	1,8	2,5
-v4 write_LOCAL_QUORUM_STCS	3525	6394	10804	14313	18465	22709	25715	1,1	1,2	1,5	1,7	1,9	2,4	3,1
-
-v5 write_LOCAL_QUORUM_UCS4	3963	7097	12932	17704	23469	28934	32602	1,0	1,1	1,2	1,3	1,5	1,8	2,5
 v4 write_LOCAL_QUORUM_STCS	3525	6394	10804	14313	18465	22709	25715	1,1	1,2	1,5	1,7	1,9	2,4	3,1
 ...
 ```
