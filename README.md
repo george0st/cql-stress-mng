@@ -70,7 +70,7 @@ echo 'START write, 4x thread: 1/1...'
 echo 'START write, 8x thread: 2/2...'
 ./apache-cassandra-5.0.2/tools/bin/cassandra-stress write duration=1m cl=LOCAL_ONE no-warmup -node 10.129.52.58,10.129.53.21,10.129.52.57 -mode user=perf password=perf prepared protocolVersion=4 connectionsPerHost=24 maxPending=384 -schema "replication(strategy=NetworkTopologyStrategy,factor=3)" "compaction(strategy=LeveledCompactionStrategy,sstable_size_in_mb=160,fanout_size=10)" -rate "threads=8" -reporting output-frequency=5s > "./stress-output/$curr_date/$curr_date v4 write_LOCAL_ONE_LCS_8xTHR.txt"
 echo 'START write, 16x thread: 3/3...'
-rem ...
+# ...
 ```
 #### 1.1.2 Generate shell scripts based on 'compareV4V5_sequenceTHR\_cass_*.env'
 
@@ -95,7 +95,7 @@ echo 'START write, 100x thread: 1/1...'
 
 echo 'START read, 100x thread: 2/1...'
 ./apache-cassandra-5.0.2/tools/bin/cassandra-stress read duration=1m cl=LOCAL_ONE no-warmup -node 10.129.52.58,10.129.53.21,10.129.52.57 -mode user=perf password=perf prepared protocolVersion=4 connectionsPerHost=24 maxPending=384 -rate "threads<=100" -reporting output-frequency=5s > "./stress-output/$curr_date/$curr_date v4 read_LOCAL_ONE_LCS_100xTHR.txt"
-rem ...
+# ...
 ```
 ### 1.2 Extract
 
