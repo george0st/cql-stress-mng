@@ -18,10 +18,10 @@ Pre-requisites:
    - IP addresses for connection
    - login information e.g. username/password
 
-Motivation:
- - use a standard and verified official tool for testing
- - don't reinvent the wheel (unless necessary)
- - focus on own tests (not the test tooling)
+Motivation for this tool/repo:
+ - use the standard and verified official tool for testing CQL solutions
+ - focus on your own tests (not on creating a tool for performance tests)
+ - don't reinvent the wheel (unless necessary, the time is money)
 
 ## 1. Command line usage
 
@@ -122,4 +122,6 @@ compare -d "C:/Python/.NEW Compare V4 vs V5/FULLFinal/"
 
 ![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/PRF-v4_vs_v5_write_LOCAL_ONE_STCS-UCS8-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
 
+![graph](https://github.com/george0st/cql-stress-mng/blob/main/docs/samples/PRF-v4_vs_v5_write_LOCAL_QUORUM_STCS-UCS8-2024-12-01_12-18-17-bulk-1x1.png?raw=true)
 
+#### Compare as text (Performance/Throughput & Response time)

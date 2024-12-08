@@ -20,9 +20,14 @@ class StressCompare:
     #EXECUTORS_HIGH = [4, 8, 16, 32, 64, 128, 256, 512]
 
     def __init__(self, input_path, columns: list[str]=COLUMNS_LOW):
+        """
+        Compare requested outputs.
+
+        :param input_path:      Input path for extracted files
+        :param columns:         list of columns for compare
+        """
         self._input_path = input_path
         self._items=[]
-        #self._executors=executors
         self._columns=columns
 
     def add_file_set(self, join_label, old_label, old_file, new_label, new_file, optional = False):
@@ -47,7 +52,7 @@ class StressCompare:
         new_executors=""
         old_executors=""
 
-        # V5
+        # new dataset
         new_row += f"{new_label}\t"
         for index in range(len(new.columns)):
 
@@ -64,7 +69,7 @@ class StressCompare:
         new_row = new_row[:-1]
         new_row += "\n"
 
-        # V4
+        # old dataset
         new_row += f"{old_label}\t"
         for index in range(len(old.columns)):
 
@@ -81,20 +86,26 @@ class StressCompare:
         new_row = new_row[:-1]
         new_row += "\n"
 
+        # calc percentiges
+
         if old_executors != new_executors:
             print("!!! DIFFERENT EXECUTORS !!!!")
         return new_row.replace(".",",").replace(" ms",""), new_executors
 
     def text(self):
+        """
+        Text compare, focus on CSV files as input source
+        :return:
+        """
 
-        executors=""
-        output=""
+        executors = ""
+        output = ""
         final_output = ""
         final_executors=""
 
         for item_set in self._items:
             optional = item_set[4]
-            output, executors =self._run_item(item_set[0], item_set[1], item_set[2], item_set[3])
+            output, executors = self._run_item(item_set[0], item_set[1], item_set[2], item_set[3])
 
             if output:
                 if len(final_executors)==0:
@@ -102,7 +113,7 @@ class StressCompare:
 
                 final_output += output+"\r\n"
 
-                if executors!=final_executors:
+                if executors != final_executors:
                     print("!!! DIFFERENT EXECUTORS !!!")
             else:
                 if not optional:
@@ -171,20 +182,6 @@ class StressCompare:
         self.add_default(consistency_level)
         self.run()
 
-    def graph_all(self, output_dir="output"):
-        """Generate all graphs"""
-
-        graph = GraphPerformance()
-
-        output_list=[]
-
-        # generate all
-        filter=path.join(self._input_path, "*.txt")
-        for input_file in glob(filter):
-            for file in graph.generate_from_file(input_file, output_dir):
-                output_list.append(file)
-
-
     def _graph_item(self, old_label, old_file_name, new_label, new_file_name):
         new_file = None
         old_file = None
@@ -235,7 +232,7 @@ class StressCompare:
         return header, cores
 
     def graph(self, output_dir="output"):
-        """Generate graph based on expected compare"""
+        """Generate graph based on TXT(JSON) files from extract"""
         from qgate_graph.graph_performance import GraphPerformance
 
         for item_set in self._items:
@@ -252,44 +249,11 @@ class StressCompare:
                 graph.print_details(compare_cores)
                 graph.print_footer(True, duration)
 
-                #print(output.text_buffer)
                 # create graph based on text output
-
                 generator = GraphPerformance()
                 generator.generate_from_text(output.text_buffer, output_dir, suppress_error=True)
                 output.close()
-
             else:
                 if not optional:
                     print(f"!!! Missing '{item_set[0]}' & '{item_set[2]}' !!!")
 
-
-        # executors=""
-        # output=""
-        # final_output = ""
-        # final_executors=""
-        #
-        # for item_set in self._items:
-        #     optional = item_set[4]
-        #     output, executors =self._run_item(item_set[0], item_set[1], item_set[2], item_set[3])
-        #
-        #     if output:
-        #         if len(final_executors)==0:
-        #             final_executors = executors
-        #
-        #         final_output += output+"\r\n"
-        #
-        #         if executors!=final_executors:
-        #             print("!!! DIFFERENT EXECUTORS !!!")
-        #     else:
-        #         if not optional:
-        #             print(f"!!! Missing '{item_set[0]}' & '{item_set[2]}' !!!")
-        #
-        # # create header
-        # header=f"Test case\t"
-        # for i in range(len(self._columns)):
-        #     header += f"{executors}\t"
-        # header = header [:-1]
-        #
-        # print(header)
-        # print(final_output)
