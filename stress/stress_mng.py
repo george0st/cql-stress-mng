@@ -14,7 +14,8 @@ import re
 
 def get_template(template_path, perf_dir = "."):
 
-    template =""
+    template = ""
+
     if not template_path.lower().endswith(".txt"):
         template_path += ".txt"
     template_list = helper.read_file_lines(path.join(perf_dir, "config", template_path))
@@ -152,11 +153,11 @@ def stress_test(output: CQLOutput, params: dict, perf_dir = ".", counter=0):
 
         arguments=params[key].split(",")
 
-        # get template from RUN (parse first argument)
-        template = get_template(arguments[0].strip(), perf_dir)
-
         # get list of variables for RUN (parse other arguments)
         run_variables, run_variable_values=get_arguments(params, arguments)
+
+        # get template from RUN (parse first argument)
+        template = get_template(arguments[0].strip(), perf_dir)
 
         # get variables from template
         variables=get_variables(template)
@@ -328,9 +329,17 @@ def graph_group():
 
 @graph_group.command()
 @click.option("-d", "--dir", help="directory with particular items (default './stress_output/')", default="./stress_output/")
-@click.option("-g", "--graph", help="compare output to the sub-directory 'graph'  form (default 'graph')", default="graph")
-def graph(dir, graph):
+@click.option("-i", "--input", help="input sub-directory under dir (default 'extract')", default="extract")
+@click.option("-o", "--output", help="output sub-directory under dir (default 'graph')", default="graph")
+def graph(dir, input, output):
     """Create graphs from TXT(JSON) to the sub-dir 'graph'"""
+    from qgate_graph.graph_performance import GraphPerformance
+    # create graph based on text output
+
+    generator = GraphPerformance()
+    generator.generate_from_dir(path.join(dir, input), path.join(dir, output))
+
+
     pass
 
 @click.group()
