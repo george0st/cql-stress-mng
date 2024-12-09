@@ -35,7 +35,7 @@ table_definition: |
       data blob,
       PRIMARY KEY (id, entity, orderId)
   ) WITH CLUSTERING ORDER BY (entity ASC, orderId ASC)
-    AND compaction = { 'class': 'SizeTieredCompactionStrategy' }
+    AND compaction = { 'class': 'UnifiedCompactionStrategy' }
     AND compression = { 'class': 'LZ4Compressor' }
 
 #  CREATE TABLE prftest1.process_data (
