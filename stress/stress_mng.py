@@ -3,6 +3,7 @@ from cql_config import CQLConfig
 from cql_output import CQLOutput
 from extract_summary import ExtractSummary
 from stress_compare import StressCompare
+from stress_graph import StressGraph
 from colorama import Fore, Style
 import cql_helper as helper
 from glob import glob
@@ -316,7 +317,6 @@ def compare(dir, console, graph):
     compact_level = "LOCAL_QUORUM"
     print(f"==== {compact_level}===")
     comp.add_default(compact_level)
-    comp.add_default(compact_level)
     if helper.str2bool(console):
         comp.text()
     if len(graph) > 0:
@@ -331,16 +331,56 @@ def graph_group():
 @click.option("-d", "--dir", help="directory with particular items (default './stress_output/')", default="./stress_output/")
 @click.option("-i", "--input", help="input sub-directory under dir (default 'extract')", default="extract")
 @click.option("-o", "--output", help="output sub-directory under dir (default 'graph')", default="graph")
-def graph(dir, input, output):
+@click.option("-g", "--groups", help="output sub-directory under dir (default '')", default="")
+def graph(dir, input, output, groups):
     """Create graphs from TXT(JSON) to the sub-dir 'graph'"""
     from qgate_graph.graph_performance import GraphPerformance
-    # create graph based on text output
 
+    # create graph based on text output
     generator = GraphPerformance()
     generator.generate_from_dir(path.join(dir, input), path.join(dir, output))
 
+    mix = StressGraph(path.join(dir, input))
 
-    pass
+    # INSERT
+    join_cores, duration, now = mix.join(["* 1_*_insert user_LOCAL_ONE*",
+                           "* 2_*_insert user_LOCAL_ONE*",
+                           "* 3_*_insert user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_insert_1", join_cores, duration, now)
+
+    join_cores, duration, now = mix.join(["* 3_*_insert user_LOCAL_ONE*",
+                           "* 4_*_insert user_LOCAL_ONE*",
+                           "* 5_*_insert user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_insert_2", join_cores, duration, now)
+
+    join_cores, duration, now = mix.join(["* 5_*_insert user_LOCAL_ONE*",
+                           "* 6_*_insert user_LOCAL_ONE*",
+                           "* 7_*_insert user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_insert_3", join_cores, duration, now)
+
+    # SELECT
+    join_cores, duration, now = mix.join(["* 1_*_simple1 user_LOCAL_ONE*",
+                           "* 2_*_simple1 user_LOCAL_ONE*",
+                           "* 3_*_simple1 user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_select_1", join_cores, duration, now)
+
+    join_cores, duration, now = mix.join(["* 3_*_simple1 user_LOCAL_ONE*",
+                           "* 4_*_simple1 user_LOCAL_ONE*",
+                           "* 5_*_simple1 user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_select_2", join_cores, duration, now)
+
+    join_cores, duration, now = mix.join(["* 5_*_simple1 user_LOCAL_ONE*",
+                           "* 6_*_simple1 user_LOCAL_ONE*",
+                           "* 7_*_simple1 user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_select_3", join_cores, duration, now)
+
+
+    # 1,2,3
+    # 3,4,5
+    # 5,6,7
+
+
+
 
 @click.group()
 def generate_group():
