@@ -1,0 +1,106 @@
+# insert data
+# cassandra-stress user profile=/home/stress/cqlstress-example.yaml ops(insert=1)
+
+# read, using query simple1:
+# cassandra-stress profile=/home/stress/cqlstress-example.yaml ops(simple1=1)
+
+# mixed workload (20/80)
+# cassandra-stress user profile=/home/stress/cqlstress-example.yaml ops(insert=2,simple1=8)
+
+
+#
+# Keyspace info
+#
+keyspace: prftest1
+
+#
+# The CQL for creating a keyspace (optional if it already exists)
+#
+keyspace_definition: |
+  CREATE KEYSPACE prftest1 WITH replication = {'class': 'NetworkTopologyStrategy', 'replication_factor': 3};
+
+#
+# Table info
+#
+table: process_data
+
+#
+# The CQL for creating a table you wish to stress (optional if it already exists)
+#
+table_definition: |  
+  CREATE TABLE prftest1.process_data (
+      id bigint,
+      entity text,
+      orderId timeuuid,  
+      data blob,
+      PRIMARY KEY (id, entity, orderId)
+  ) WITH CLUSTERING ORDER BY (entity ASC, orderId ASC)
+    AND compaction = { 'class': 'UnifiedCompactionStrategy', 'scaling_parameters':'L10,T10' }
+    AND compression = { 'class': 'LZ4Compressor' }
+
+#  CREATE TABLE prftest1.process_data (
+#      id uuid,
+#      entity text,
+#      orderId timeuuid,
+#      data blob,
+#      PRIMARY KEY (id, entity, orderId)
+#  ) WITH CLUSTERING ORDER BY (entity ASC, orderId ASC)
+#    AND compaction = { 'class': 'SizeTieredCompactionStrategy' }
+#    AND compression = { 'class': 'LZ4Compressor' }
+
+
+#
+# Optional meta information on the generated columns in the above table
+# The min and max only apply to text and blob types
+# The distribution field represents the total unique population
+# distribution of that column across rows.  Supported types are
+# 
+#      EXP(min..max)                        An exponential distribution over the range [min..max]
+#      EXTREME(min..max,shape)              An extreme value (Weibull) distribution over the range [min..max]
+#      GAUSSIAN(min..max,stdvrng)           A gaussian/normal distribution, where mean=(min+max)/2, and stdev is (mean-min)/stdvrng
+#      GAUSSIAN(min..max,mean,stdev)        A gaussian/normal distribution, with explicitly defined mean and stdev
+#      UNIFORM(min..max)                    A uniform distribution over the range [min, max]
+#      FIXED(val)                           A fixed distribution, always returning the same value
+#      SEQ(min..max)                        A fixed sequence, returning values in the range min to max sequentially (starting based on seed), wrapping if necessary.
+#      Aliases: extr, gauss, normal, norm, weibull
+#
+#      If preceded by ~, the distribution is inverted
+#
+# Defaults for all columns are size: uniform(4..8), population: uniform(1..100B), cluster: fixed(1)
+#
+columnspec:
+  - name: id
+    population: seq(1..10000)
+  - name: entity
+    size: uniform(1..10)
+    population: seq(1..10)
+  - name: orderId
+    population: uniform(1000..2000)
+  - name: data
+    size: fixed(10240)
+    population: seq(1..100000)
+
+insert:
+  partitions: fixed(1)
+  batchtype: UNLOGGED
+  select: fixed(1)/1
+
+#
+# A list of queries you wish to run against the schema
+#
+queries:
+   simple1:
+      cql: select * from prftest1.process_data where id = ? and entity = ? LIMIT 1
+      fields: samerow             # samerow or multirow (select arguments from the same row, or randomly from all rows in the partition)
+
+#
+# A list of bulk read queries that analytics tools may perform against the schema
+# Each query will sweep an entire token range, page by page.
+#
+token_range_queries:
+  all_columns_tr_query:
+    columns: '*'
+    page_size: 5000
+
+  value_tr_query:
+    columns: value

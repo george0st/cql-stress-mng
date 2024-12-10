@@ -3,6 +3,7 @@ from cql_config import CQLConfig
 from cql_output import CQLOutput
 from extract_summary import ExtractSummary
 from stress_compare import StressCompare
+from stress_graph import StressGraph
 from colorama import Fore, Style
 import cql_helper as helper
 from glob import glob
@@ -14,7 +15,8 @@ import re
 
 def get_template(template_path, perf_dir = "."):
 
-    template =""
+    template = ""
+
     if not template_path.lower().endswith(".txt"):
         template_path += ".txt"
     template_list = helper.read_file_lines(path.join(perf_dir, "config", template_path))
@@ -152,11 +154,11 @@ def stress_test(output: CQLOutput, params: dict, perf_dir = ".", counter=0):
 
         arguments=params[key].split(",")
 
-        # get template from RUN (parse first argument)
-        template = get_template(arguments[0].strip(), perf_dir)
-
         # get list of variables for RUN (parse other arguments)
         run_variables, run_variable_values=get_arguments(params, arguments)
+
+        # get template from RUN (parse first argument)
+        template = get_template(arguments[0].strip(), perf_dir)
 
         # get variables from template
         variables=get_variables(template)
@@ -315,11 +317,77 @@ def compare(dir, console, graph):
     compact_level = "LOCAL_QUORUM"
     print(f"==== {compact_level}===")
     comp.add_default(compact_level)
-    comp.add_default(compact_level)
     if helper.str2bool(console):
         comp.text()
     if len(graph) > 0:
         comp.graph(path.join(dir, graph))
+
+
+@click.group()
+def graph_group():
+    pass
+
+@graph_group.command()
+@click.option("-d", "--dir", help="directory with particular items (default './stress_output/')", default="./stress_output/")
+@click.option("-i", "--input", help="input sub-directory under dir (default 'extract')", default="extract")
+@click.option("-o", "--output", help="output sub-directory under dir (default 'graph')", default="graph")
+@click.option("-g", "--groups", help="output sub-directory under dir (default '')", default="")
+def graph(dir, input, output, groups):
+    """Create graphs from TXT(JSON) to the sub-dir 'graph'"""
+    from qgate_graph.graph_performance import GraphPerformance
+
+    # create graph based on text output
+    generator = GraphPerformance()
+    generator.generate_from_dir(path.join(dir, input), path.join(dir, output))
+
+    mix = StressGraph(path.join(dir, input))
+
+    # INSERT
+    join_cores, duration, now = mix.join(["* 1_*_insert user_LOCAL_ONE*",
+                           "* 2_*_insert user_LOCAL_ONE*",
+                           "* 3_*_insert user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_insert_1", join_cores, duration, now)
+
+    join_cores, duration, now = mix.join(["* 3_*_insert user_LOCAL_ONE*",
+                           "* 4_*_insert user_LOCAL_ONE*",
+                           "* 5_*_insert user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_insert_2", join_cores, duration, now)
+
+    join_cores, duration, now = mix.join(["* 5_*_insert user_LOCAL_ONE*",
+                           "* 6_*_insert user_LOCAL_ONE*",
+                           "* 7_*_insert user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_insert_3", join_cores, duration, now)
+
+    join_cores, duration, now = mix.join(["* 7_*_insert user_LOCAL_ONE*",
+                           "* 8_*_insert user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_insert_3", join_cores, duration, now)
+
+    # SELECT
+    join_cores, duration, now = mix.join(["* 1_*_simple1 user_LOCAL_ONE*",
+                           "* 2_*_simple1 user_LOCAL_ONE*",
+                           "* 3_*_simple1 user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_select_1", join_cores, duration, now)
+
+    join_cores, duration, now = mix.join(["* 3_*_simple1 user_LOCAL_ONE*",
+                           "* 4_*_simple1 user_LOCAL_ONE*",
+                           "* 5_*_simple1 user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_select_2", join_cores, duration, now)
+
+    join_cores, duration, now = mix.join(["* 5_*_simple1 user_LOCAL_ONE*",
+                           "* 6_*_simple1 user_LOCAL_ONE*",
+                           "* 7_*_simple1 user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_select_3", join_cores, duration, now)
+
+    join_cores, duration, now = mix.join(["* 7_*_simple1 user_LOCAL_ONE*",
+                           "* 8_*_simple1 user_LOCAL_ONE*"])
+    mix.graph(path.join(dir, output), "summary_select_4", join_cores, duration, now)
+
+
+    # 1,2,3
+    # 3,4,5
+    # 5,6,7
+
+
 
 
 @click.group()
@@ -334,7 +402,7 @@ def generate(env, perf_dir, log):
     """Generate performance tests as *.sh for 'cassandra-stress'"""
     main_execute(env, perf_dir, log)
 
-cli = click.CommandCollection(sources=[generate_group, remove_group, extract_group, compare_group, version_group])
+cli = click.CommandCollection(sources=[generate_group, remove_group, extract_group, compare_group, graph_group, version_group])
 
 if __name__ == '__main__':
     cli()

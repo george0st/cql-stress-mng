@@ -7,6 +7,7 @@ from file_marker import FileMarker as const
 from cql_output import CQLOutput
 import datetime
 
+
 class StressCompare:
     """ Generate compare stress tests (typically between cassandra v4/old and v5/new).
         The outputs are in json, txt format
