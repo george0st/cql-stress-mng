@@ -360,7 +360,7 @@ def graph(dir, input, output, groups):
 
     join_cores, duration, now = mix.join(["* 7_*_insert user_LOCAL_ONE*",
                            "* 8_*_insert user_LOCAL_ONE*"])
-    mix.graph(path.join(dir, output), "summary_insert_3", join_cores, duration, now)
+    mix.graph(path.join(dir, output), "summary_insert_4", join_cores, duration, now)
 
     # SELECT
     join_cores, duration, now = mix.join(["* 1_*_simple1 user_LOCAL_ONE*",
