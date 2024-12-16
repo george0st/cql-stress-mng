@@ -37,9 +37,10 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  compare   Compare data from TXT(JSON) to the sub-dir 'extract'
+  compare   Compare data from TXT(JSON) to the sub-dir 'graph'
   extract   Extract data from 'cassandra-stress' output to the sub-dir...
   generate  Generate performance tests as *.sh for 'cassandra-stress'
+  graph     Create graphs from TXT(JSON) to the sub-dir 'graph'
   remove    Remove keyspace or table from CQL solution
   version   Print current version of key components
 ```
@@ -111,6 +112,14 @@ The Compare data based on TXT(JSON) files to text (in console) or graphs (as PNG
 
 ```sh
 compare -d "C:/Python/.NEW Compare V4 vs V5/FULLFinal/"
+```
+
+### 1.4 Graph
+
+The Create graphs from TXT(JSON) to the sub-dir 'graph'. 
+
+```sh
+graph -d "C:/Python/.4NEW Compare V5 NONPROD/"
 ```
 
 ## 2. Sample of outputs
