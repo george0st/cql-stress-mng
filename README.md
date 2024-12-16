@@ -37,9 +37,10 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  compare   Compare data from TXT(JSON) to the sub-dir 'extract'
+  compare   Compare data from TXT(JSON) to the sub-dir 'graph'
   extract   Extract data from 'cassandra-stress' output to the sub-dir...
   generate  Generate performance tests as *.sh for 'cassandra-stress'
+  graph     Create graphs from TXT(JSON) to the sub-dir 'graph'
   remove    Remove keyspace or table from CQL solution
   version   Print current version of key components
 ```
