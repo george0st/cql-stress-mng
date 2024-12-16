@@ -341,7 +341,7 @@ def graph(dir, input, output, groups):
     generator.generate_from_dir(path.join(dir, input), path.join(dir, output))
 
     if len(groups)>0:
-    mix = StressGraph(path.join(dir, input))
+        mix = StressGraph(path.join(dir, input))
 
         # INSERT
         join_cores, duration, now = mix.join(["* 1_*_insert user_LOCAL_ONE*",
