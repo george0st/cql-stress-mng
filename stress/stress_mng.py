@@ -340,55 +340,48 @@ def graph(dir, input, output, groups):
     generator = GraphPerformance()
     generator.generate_from_dir(path.join(dir, input), path.join(dir, output))
 
+    if len(groups)>0:
     mix = StressGraph(path.join(dir, input))
 
-    # INSERT
-    join_cores, duration, now = mix.join(["* 1_*_insert user_LOCAL_ONE*",
-                           "* 2_*_insert user_LOCAL_ONE*",
-                           "* 3_*_insert user_LOCAL_ONE*"])
-    mix.graph(path.join(dir, output), "summary_insert_1", join_cores, duration, now)
+        # INSERT
+        join_cores, duration, now = mix.join(["* 1_*_insert user_LOCAL_ONE*",
+                               "* 2_*_insert user_LOCAL_ONE*",
+                               "* 3_*_insert user_LOCAL_ONE*"])
+        mix.graph(path.join(dir, output), "summary_insert_1", join_cores, duration, now)
 
-    join_cores, duration, now = mix.join(["* 3_*_insert user_LOCAL_ONE*",
-                           "* 4_*_insert user_LOCAL_ONE*",
-                           "* 5_*_insert user_LOCAL_ONE*"])
-    mix.graph(path.join(dir, output), "summary_insert_2", join_cores, duration, now)
+        join_cores, duration, now = mix.join(["* 3_*_insert user_LOCAL_ONE*",
+                               "* 4_*_insert user_LOCAL_ONE*",
+                               "* 5_*_insert user_LOCAL_ONE*"])
+        mix.graph(path.join(dir, output), "summary_insert_2", join_cores, duration, now)
 
-    join_cores, duration, now = mix.join(["* 5_*_insert user_LOCAL_ONE*",
-                           "* 6_*_insert user_LOCAL_ONE*",
-                           "* 7_*_insert user_LOCAL_ONE*"])
-    mix.graph(path.join(dir, output), "summary_insert_3", join_cores, duration, now)
+        join_cores, duration, now = mix.join(["* 5_*_insert user_LOCAL_ONE*",
+                               "* 6_*_insert user_LOCAL_ONE*",
+                               "* 7_*_insert user_LOCAL_ONE*"])
+        mix.graph(path.join(dir, output), "summary_insert_3", join_cores, duration, now)
 
-    join_cores, duration, now = mix.join(["* 7_*_insert user_LOCAL_ONE*",
-                           "* 8_*_insert user_LOCAL_ONE*"])
-    mix.graph(path.join(dir, output), "summary_insert_4", join_cores, duration, now)
+        join_cores, duration, now = mix.join(["* 7_*_insert user_LOCAL_ONE*",
+                               "* 8_*_insert user_LOCAL_ONE*"])
+        mix.graph(path.join(dir, output), "summary_insert_4", join_cores, duration, now)
 
-    # SELECT
-    join_cores, duration, now = mix.join(["* 1_*_simple1 user_LOCAL_ONE*",
-                           "* 2_*_simple1 user_LOCAL_ONE*",
-                           "* 3_*_simple1 user_LOCAL_ONE*"])
-    mix.graph(path.join(dir, output), "summary_select_1", join_cores, duration, now)
+        # SELECT
+        join_cores, duration, now = mix.join(["* 1_*_simple1 user_LOCAL_ONE*",
+                               "* 2_*_simple1 user_LOCAL_ONE*",
+                               "* 3_*_simple1 user_LOCAL_ONE*"])
+        mix.graph(path.join(dir, output), "summary_select_1", join_cores, duration, now)
 
-    join_cores, duration, now = mix.join(["* 3_*_simple1 user_LOCAL_ONE*",
-                           "* 4_*_simple1 user_LOCAL_ONE*",
-                           "* 5_*_simple1 user_LOCAL_ONE*"])
-    mix.graph(path.join(dir, output), "summary_select_2", join_cores, duration, now)
+        join_cores, duration, now = mix.join(["* 3_*_simple1 user_LOCAL_ONE*",
+                               "* 4_*_simple1 user_LOCAL_ONE*",
+                               "* 5_*_simple1 user_LOCAL_ONE*"])
+        mix.graph(path.join(dir, output), "summary_select_2", join_cores, duration, now)
 
-    join_cores, duration, now = mix.join(["* 5_*_simple1 user_LOCAL_ONE*",
-                           "* 6_*_simple1 user_LOCAL_ONE*",
-                           "* 7_*_simple1 user_LOCAL_ONE*"])
-    mix.graph(path.join(dir, output), "summary_select_3", join_cores, duration, now)
+        join_cores, duration, now = mix.join(["* 5_*_simple1 user_LOCAL_ONE*",
+                               "* 6_*_simple1 user_LOCAL_ONE*",
+                               "* 7_*_simple1 user_LOCAL_ONE*"])
+        mix.graph(path.join(dir, output), "summary_select_3", join_cores, duration, now)
 
-    join_cores, duration, now = mix.join(["* 7_*_simple1 user_LOCAL_ONE*",
-                           "* 8_*_simple1 user_LOCAL_ONE*"])
-    mix.graph(path.join(dir, output), "summary_select_4", join_cores, duration, now)
-
-
-    # 1,2,3
-    # 3,4,5
-    # 5,6,7
-
-
-
+        join_cores, duration, now = mix.join(["* 7_*_simple1 user_LOCAL_ONE*",
+                               "* 8_*_simple1 user_LOCAL_ONE*"])
+        mix.graph(path.join(dir, output), "summary_select_4", join_cores, duration, now)
 
 @click.group()
 def generate_group():

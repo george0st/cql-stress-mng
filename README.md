@@ -114,6 +114,14 @@ The Compare data based on TXT(JSON) files to text (in console) or graphs (as PNG
 compare -d "C:/Python/.NEW Compare V4 vs V5/FULLFinal/"
 ```
 
+### 1.4 Graph
+
+The Create graphs from TXT(JSON) to the sub-dir 'graph'. 
+
+```sh
+graph -d "C:/Python/.4NEW Compare V5 NONPROD/"
+```
+
 ## 2. Sample of outputs
 #### 2.1 Compare as graph
 
