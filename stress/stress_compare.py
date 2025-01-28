@@ -9,7 +9,7 @@ import datetime
 
 
 class StressCompare:
-    """ Generate compare stress tests (typically between cassandra v4/old and v5/new).
+    """ Generate compare stress tests (typically between e.g. cassandra v4/old and v5/new).
         The outputs are in json, txt format
     """
 
@@ -20,16 +20,20 @@ class StressCompare:
     #EXECUTORS_LOW = [4, 8, 16, 32, 64, 128]
     #EXECUTORS_HIGH = [4, 8, 16, 32, 64, 128, 256, 512]
 
-    def __init__(self, input_path, columns: list[str]=COLUMNS_LOW):
+    def __init__(self, input_path, columns: list[str]=COLUMNS_LOW, old_prefix="v4", new_prefix="v5"):
         """
         Compare requested outputs.
 
         :param input_path:      Input path for extracted files
         :param columns:         list of columns for compare
+        :param old_prefix:      old prefix for files e.g. "v4"
+        :param new_prefix:      new prefix for files e.g. "v5"
         """
         self._input_path = input_path
         self._items=[]
         self._columns=columns
+        self._old_prefix=old_prefix
+        self._new_prefix=new_prefix
 
     def add_file_set(self, join_label, old_label, old_file, new_label, new_file, optional = False):
         self._items.append((old_label, old_file, new_label, new_file, optional, join_label))
@@ -133,48 +137,48 @@ class StressCompare:
         # L - read heavy, T - write heavy
 
         # extra tests for WRITE (compare with STCS)
-        self.add_file_set(f"v4 vs v5 write_{consistency_level}_STCS",
-                          f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS",
-                          f"v5 write_{consistency_level}_STCS", f"*v5 write_{consistency_level}_STCS")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} write_{consistency_level}_STCS",
+                          f"{self._old_prefix} write_{consistency_level}_STCS", f"*{self._old_prefix} write_{consistency_level}_STCS",
+                          f"{self._new_prefix} write_{consistency_level}_STCS", f"*{self._new_prefix} write_{consistency_level}_STCS")
 
         # optional compare
-        self.add_file_set(f"v4 vs v5 write_{consistency_level}_STCS-UCS2",
-                          f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS",
-                          f"v5 write_{consistency_level}_UCS2", f"*v5 write_{consistency_level}_UCS2", True)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} write_{consistency_level}_STCS-UCS2",
+                          f"{self._old_prefix} write_{consistency_level}_STCS", f"*{self._old_prefix} write_{consistency_level}_STCS",
+                          f"{self._new_prefix} write_{consistency_level}_UCS2", f"*{self._new_prefix} write_{consistency_level}_UCS2", True)
 
-        self.add_file_set(f"v4 vs v5 write_{consistency_level}_STCS-UCS4",
-                          f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS",
-                        f"v5 write_{consistency_level}_UCS4", f"*v5 write_{consistency_level}_UCS4")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} write_{consistency_level}_STCS-UCS4",
+                          f"{self._old_prefix} write_{consistency_level}_STCS", f"*{self._old_prefix} write_{consistency_level}_STCS",
+                        f"{self._new_prefix} write_{consistency_level}_UCS4", f"*{self._new_prefix} write_{consistency_level}_UCS4")
 
-        self.add_file_set(f"v4 vs v5 write_{consistency_level}_STCS-UCS8",
-                          f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS",
-                        f"v5 write_{consistency_level}_UCS8", f"*v5 write_{consistency_level}_UCS8")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} write_{consistency_level}_STCS-UCS8",
+                          f"{self._old_prefix} write_{consistency_level}_STCS", f"*{self._old_prefix} write_{consistency_level}_STCS",
+                        f"{self._new_prefix} write_{consistency_level}_UCS8", f"*{self._new_prefix} write_{consistency_level}_UCS8")
 
-        self.add_file_set( f"v4 vs v5 write_{consistency_level}_STCS-UCS10",
-                           f"v4 write_{consistency_level}_STCS", f"*v4 write_{consistency_level}_STCS",
-                        f"v5 write_{consistency_level}_UCS10", f"*v5 write_{consistency_level}_UCS10")
+        self.add_file_set( f"{self._old_prefix} vs {self._new_prefix} write_{consistency_level}_STCS-UCS10",
+                           f"{self._old_prefix} write_{consistency_level}_STCS", f"*{self._old_prefix} write_{consistency_level}_STCS",
+                        f"{self._new_prefix} write_{consistency_level}_UCS10", f"*{self._new_prefix} write_{consistency_level}_UCS10")
 
         # extra tests for READ (compare with LCS)
-        self.add_file_set(f"v4 vs v5 read_{consistency_level}_LCS",
-                          f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS",
-                        f"v5 read_{consistency_level}_LCS", f"*v5 read_{consistency_level}_LCS")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} read_{consistency_level}_LCS",
+                          f"{self._old_prefix} read_{consistency_level}_LCS", f"*{self._old_prefix} read_{consistency_level}_LCS",
+                        f"{self._new_prefix} read_{consistency_level}_LCS", f"*{self._new_prefix} read_{consistency_level}_LCS")
 
         # optional compare
-        self.add_file_set(f"v4 vs v5 read_{consistency_level}_LCS-UCS2",
-                          f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS",
-                        f"v5 read_{consistency_level}_UCS2", f"*v5 read_{consistency_level}_UCS2", True)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} read_{consistency_level}_LCS-UCS2",
+                          f"{self._old_prefix} read_{consistency_level}_LCS", f"*{self._old_prefix} read_{consistency_level}_LCS",
+                        f"{self._new_prefix} read_{consistency_level}_UCS2", f"*{self._new_prefix} read_{consistency_level}_UCS2", True)
 
-        self.add_file_set(f"v4 vs v5 read_{consistency_level}_LCS-UCS4",
-                          f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS",
-                        f"v5 read_{consistency_level}_UCS4", f"*v5 read_{consistency_level}_UCS4")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} read_{consistency_level}_LCS-UCS4",
+                          f"{self._old_prefix} read_{consistency_level}_LCS", f"*{self._old_prefix} read_{consistency_level}_LCS",
+                        f"{self._new_prefix} read_{consistency_level}_UCS4", f"*{self._new_prefix} read_{consistency_level}_UCS4")
 
-        self.add_file_set(f"v4 vs v5 read_{consistency_level}_LCS-UCS8",
-                          f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS",
-                        f"v5 read_{consistency_level}_UCS8", f"*v5 read_{consistency_level}_UCS8")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} read_{consistency_level}_LCS-UCS8",
+                          f"{self._old_prefix} read_{consistency_level}_LCS", f"*{self._old_prefix} read_{consistency_level}_LCS",
+                        f"{self._new_prefix} read_{consistency_level}_UCS8", f"*{self._new_prefix} read_{consistency_level}_UCS8")
 
-        self.add_file_set(f"v4 vs v5 read_{consistency_level}_LCS-UCS10",
-                          f"v4 read_{consistency_level}_LCS", f"*v4 read_{consistency_level}_LCS",
-                        f"v5 read_{consistency_level}_UCS10", f"*v5 read_{consistency_level}_UCS10")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} read_{consistency_level}_LCS-UCS10",
+                          f"{self._old_prefix} read_{consistency_level}_LCS", f"*{self._old_prefix} read_{consistency_level}_LCS",
+                        f"{self._new_prefix} read_{consistency_level}_UCS10", f"*{self._new_prefix} read_{consistency_level}_UCS10")
 
 
     def run_default(self, consistency_level="LOCAL_ONE"):
