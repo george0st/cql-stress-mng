@@ -131,58 +131,146 @@ class StressCompare:
         print(header)
         print(final_output)
 
-    def add_default(self, consistency_level="LOCAL_ONE"):
+    def add_cmp_same_versions(self, consistency_level="LOCAL_ONE", read="simple1", write="insert"):
+        self._items=[]
+
+        # extra tests for WRITE (compare with 1_6B)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 1_6B {write}_{consistency_level}",
+                          f"{self._old_prefix} {write} 1_6B_{consistency_level}", f"*{self._old_prefix} 1_6B_{write} *_{consistency_level}",
+                          f"{self._new_prefix} {write} 1_6B_{consistency_level}", f"*{self._new_prefix} 1_6B_{write} *_{consistency_level}")
+
+        # extra tests for WRITE (compare with 2_1KB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 2_1KB {write}_{consistency_level}",
+                          f"{self._old_prefix} {write} 2_1KB_{consistency_level}", f"*{self._old_prefix} 2_1KB_{write} *_{consistency_level}",
+                          f"{self._new_prefix} {write} 2_1KB_{consistency_level}", f"*{self._new_prefix} 2_1KB_{write} *_{consistency_level}")
+
+        # extra tests for WRITE (compare with 3_10KB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 3_10KB {write}_{consistency_level}",
+                          f"{self._old_prefix} {write} 3_10KB_{consistency_level}", f"*{self._old_prefix} 3_10KB_{write} *_{consistency_level}",
+                          f"{self._new_prefix} {write} 3_10KB_{consistency_level}", f"*{self._new_prefix} 3_10KB_{write} *_{consistency_level}")
+
+        # extra tests for WRITE (compare with 4_50KB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 4_50KB {write}_{consistency_level}",
+                          f"{self._old_prefix} {write} 4_50KB_{consistency_level}", f"*{self._old_prefix} 4_50KB_{write} *_{consistency_level}",
+                          f"{self._new_prefix} {write} 4_50KB_{consistency_level}", f"*{self._new_prefix} 4_50KB_{write} *_{consistency_level}")
+
+        # extra tests for WRITE (compare with 5_100KB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 5_100KB {write}_{consistency_level}",
+                          f"{self._old_prefix} {write} 5_100KB_{consistency_level}", f"*{self._old_prefix} 5_100KB_{write} *_{consistency_level}",
+                          f"{self._new_prefix} {write} 5_100KB_{consistency_level}", f"*{self._new_prefix} 5_100KB_{write} *_{consistency_level}")
+
+        # extra tests for WRITE (compare with 6_300KB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 6_300KB {write}_{consistency_level}",
+                          f"{self._old_prefix} {write} 6_300KB_{consistency_level}", f"*{self._old_prefix} 6_300KB_{write} *_{consistency_level}",
+                          f"{self._new_prefix} {write} 6_300KB_{consistency_level}", f"*{self._new_prefix} 6_300KB_{write} *_{consistency_level}")
+
+        # extra tests for WRITE (compare with 7_1MB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 7_1MB {write}_{consistency_level}",
+                          f"{self._old_prefix} {write} 7_1MB_{consistency_level}", f"*{self._old_prefix} 7_1MB_{write} *_{consistency_level}",
+                          f"{self._new_prefix} {write} 7_1MB_{consistency_level}", f"*{self._new_prefix} 7_1MB_{write} *_{consistency_level}")
+
+        # extra tests for WRITE (compare with 8_4MB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 8_4MB {write}_{consistency_level}",
+                          f"{self._old_prefix} {write} 8_4MB_{consistency_level}", f"*{self._old_prefix} 8_4MB_{write} *_{consistency_level}",
+                          f"{self._new_prefix} {write} 8_4MB_{consistency_level}", f"*{self._new_prefix} 8_4MB_{write} *_{consistency_level}")
+
+        # READ
+        # extra tests for READ (compare with 1_6B)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 1_6B {read}_{consistency_level}",
+                          f"{self._old_prefix} {read} 1_6B_{consistency_level}", f"*{self._old_prefix} 1_6B_{read} *_{consistency_level}",
+                          f"{self._new_prefix} {read} 1_6B_{consistency_level}", f"*{self._new_prefix} 1_6B_{read} *_{consistency_level}")
+
+        # extra tests for READ (compare with 2_1KB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 2_1KB {read}_{consistency_level}",
+                          f"{self._old_prefix} {read} 2_1KB_{consistency_level}", f"*{self._old_prefix} 2_1KB_{read} *_{consistency_level}",
+                          f"{self._new_prefix} {read} 2_1KB_{consistency_level}", f"*{self._new_prefix} 2_1KB_{read} *_{consistency_level}")
+
+        # extra tests for READ (compare with 3_10KB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 3_10KB {read}_{consistency_level}",
+                          f"{self._old_prefix} {read} 3_10KB_{consistency_level}", f"*{self._old_prefix} 3_10KB_{read} *_{consistency_level}",
+                          f"{self._new_prefix} {read} 3_10KB_{consistency_level}", f"*{self._new_prefix} 3_10KB_{read} *_{consistency_level}")
+
+        # extra tests for READ (compare with 4_50KB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 4_50KB {read}_{consistency_level}",
+                          f"{self._old_prefix} {read} 4_50KB_{consistency_level}", f"*{self._old_prefix} 4_50KB_{read} *_{consistency_level}",
+                          f"{self._new_prefix} {read} 4_50KB_{consistency_level}", f"*{self._new_prefix} 4_50KB_{read} *_{consistency_level}")
+
+        # extra tests for READ (compare with 5_100KB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 5_100KB {read}_{consistency_level}",
+                          f"{self._old_prefix} {read} 5_100KB_{consistency_level}", f"*{self._old_prefix} 5_100KB_{read} *_{consistency_level}",
+                          f"{self._new_prefix} {read} 5_100KB_{consistency_level}", f"*{self._new_prefix} 5_100KB_{read} *_{consistency_level}")
+
+        # extra tests for READ (compare with 6_300KB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 6_300KB {read}_{consistency_level}",
+                          f"{self._old_prefix} {read} 6_300KB_{consistency_level}", f"*{self._old_prefix} 6_300KB_{read} *_{consistency_level}",
+                          f"{self._new_prefix} {read} 6_300KB_{consistency_level}", f"*{self._new_prefix} 6_300KB_{read} *_{consistency_level}")
+
+        # extra tests for READ (compare with 7_1MB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 7_1MB {read}_{consistency_level}",
+                          f"{self._old_prefix} {read} 7_1MB_{consistency_level}", f"*{self._old_prefix} 7_1MB_{read} *_{consistency_level}",
+                          f"{self._new_prefix} {read} 7_1MB_{consistency_level}", f"*{self._new_prefix} 7_1MB_{read} *_{consistency_level}")
+
+        # extra tests for READ (compare with 8_4MB)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} 8_4MB {read}_{consistency_level}",
+                          f"{self._old_prefix} {read} 8_4MB_{consistency_level}", f"*{self._old_prefix} 8_4MB_{read} *_{consistency_level}",
+                          f"{self._new_prefix} {read} 8_4MB_{consistency_level}", f"*{self._new_prefix} 8_4MB_{read} *_{consistency_level}")
+
+
+
+    def add_cmp_different_versions(self, consistency_level="LOCAL_ONE", read="read", write="write"):
         self._items=[]
         # STCS - heavy write, LCS - read heavy
         # L - read heavy, T - write heavy
 
+        # WRITE
         # extra tests for WRITE (compare with STCS)
-        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} write_{consistency_level}_STCS",
-                          f"{self._old_prefix} write_{consistency_level}_STCS", f"*{self._old_prefix} write_{consistency_level}_STCS",
-                          f"{self._new_prefix} write_{consistency_level}_STCS", f"*{self._new_prefix} write_{consistency_level}_STCS")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} {write}_{consistency_level}_STCS",
+                          f"{self._old_prefix} {write}_{consistency_level}_STCS", f"*{self._old_prefix} {write}_{consistency_level}_STCS",
+                          f"{self._new_prefix} {write}_{consistency_level}_STCS", f"*{self._new_prefix} {write}_{consistency_level}_STCS")
 
         # optional compare
-        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} write_{consistency_level}_STCS-UCS2",
-                          f"{self._old_prefix} write_{consistency_level}_STCS", f"*{self._old_prefix} write_{consistency_level}_STCS",
-                          f"{self._new_prefix} write_{consistency_level}_UCS2", f"*{self._new_prefix} write_{consistency_level}_UCS2", True)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} {write}_{consistency_level}_STCS-UCS2",
+                          f"{self._old_prefix} {write}_{consistency_level}_STCS", f"*{self._old_prefix} {write}_{consistency_level}_STCS",
+                          f"{self._new_prefix} {write}_{consistency_level}_UCS2", f"*{self._new_prefix} {write}_{consistency_level}_UCS2", True)
 
-        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} write_{consistency_level}_STCS-UCS4",
-                          f"{self._old_prefix} write_{consistency_level}_STCS", f"*{self._old_prefix} write_{consistency_level}_STCS",
-                        f"{self._new_prefix} write_{consistency_level}_UCS4", f"*{self._new_prefix} write_{consistency_level}_UCS4")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} {write}_{consistency_level}_STCS-UCS4",
+                          f"{self._old_prefix} {write}_{consistency_level}_STCS", f"*{self._old_prefix} {write}_{consistency_level}_STCS",
+                        f"{self._new_prefix} {write}_{consistency_level}_UCS4", f"*{self._new_prefix} {write}_{consistency_level}_UCS4")
 
-        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} write_{consistency_level}_STCS-UCS8",
-                          f"{self._old_prefix} write_{consistency_level}_STCS", f"*{self._old_prefix} write_{consistency_level}_STCS",
-                        f"{self._new_prefix} write_{consistency_level}_UCS8", f"*{self._new_prefix} write_{consistency_level}_UCS8")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} {write}_{consistency_level}_STCS-UCS8",
+                          f"{self._old_prefix} {write}_{consistency_level}_STCS", f"*{self._old_prefix} {write}_{consistency_level}_STCS",
+                        f"{self._new_prefix} {write}_{consistency_level}_UCS8", f"*{self._new_prefix} {write}_{consistency_level}_UCS8")
 
-        self.add_file_set( f"{self._old_prefix} vs {self._new_prefix} write_{consistency_level}_STCS-UCS10",
-                           f"{self._old_prefix} write_{consistency_level}_STCS", f"*{self._old_prefix} write_{consistency_level}_STCS",
-                        f"{self._new_prefix} write_{consistency_level}_UCS10", f"*{self._new_prefix} write_{consistency_level}_UCS10")
+        self.add_file_set( f"{self._old_prefix} vs {self._new_prefix} {write}_{consistency_level}_STCS-UCS10",
+                           f"{self._old_prefix} {write}_{consistency_level}_STCS", f"*{self._old_prefix} {write}_{consistency_level}_STCS",
+                        f"{self._new_prefix} {write}_{consistency_level}_UCS10", f"*{self._new_prefix} {write}_{consistency_level}_UCS10")
 
+        # READ
         # extra tests for READ (compare with LCS)
-        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} read_{consistency_level}_LCS",
-                          f"{self._old_prefix} read_{consistency_level}_LCS", f"*{self._old_prefix} read_{consistency_level}_LCS",
-                        f"{self._new_prefix} read_{consistency_level}_LCS", f"*{self._new_prefix} read_{consistency_level}_LCS")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} {read}_{consistency_level}_LCS",
+                          f"{self._old_prefix} {read}_{consistency_level}_LCS", f"*{self._old_prefix} {read}_{consistency_level}_LCS",
+                        f"{self._new_prefix} {read}_{consistency_level}_LCS", f"*{self._new_prefix} {read}_{consistency_level}_LCS")
 
         # optional compare
-        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} read_{consistency_level}_LCS-UCS2",
-                          f"{self._old_prefix} read_{consistency_level}_LCS", f"*{self._old_prefix} read_{consistency_level}_LCS",
-                        f"{self._new_prefix} read_{consistency_level}_UCS2", f"*{self._new_prefix} read_{consistency_level}_UCS2", True)
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} {read}_{consistency_level}_LCS-UCS2",
+                          f"{self._old_prefix} {read}_{consistency_level}_LCS", f"*{self._old_prefix} {read}_{consistency_level}_LCS",
+                        f"{self._new_prefix} {read}_{consistency_level}_UCS2", f"*{self._new_prefix} {read}_{consistency_level}_UCS2", True)
 
-        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} read_{consistency_level}_LCS-UCS4",
-                          f"{self._old_prefix} read_{consistency_level}_LCS", f"*{self._old_prefix} read_{consistency_level}_LCS",
-                        f"{self._new_prefix} read_{consistency_level}_UCS4", f"*{self._new_prefix} read_{consistency_level}_UCS4")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} {read}_{consistency_level}_LCS-UCS4",
+                          f"{self._old_prefix} {read}_{consistency_level}_LCS", f"*{self._old_prefix} {read}_{consistency_level}_LCS",
+                        f"{self._new_prefix} {read}_{consistency_level}_UCS4", f"*{self._new_prefix} {read}_{consistency_level}_UCS4")
 
-        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} read_{consistency_level}_LCS-UCS8",
-                          f"{self._old_prefix} read_{consistency_level}_LCS", f"*{self._old_prefix} read_{consistency_level}_LCS",
-                        f"{self._new_prefix} read_{consistency_level}_UCS8", f"*{self._new_prefix} read_{consistency_level}_UCS8")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} {read}_{consistency_level}_LCS-UCS8",
+                          f"{self._old_prefix} {read}_{consistency_level}_LCS", f"*{self._old_prefix} {read}_{consistency_level}_LCS",
+                        f"{self._new_prefix} {read}_{consistency_level}_UCS8", f"*{self._new_prefix} {read}_{consistency_level}_UCS8")
 
-        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} read_{consistency_level}_LCS-UCS10",
-                          f"{self._old_prefix} read_{consistency_level}_LCS", f"*{self._old_prefix} read_{consistency_level}_LCS",
-                        f"{self._new_prefix} read_{consistency_level}_UCS10", f"*{self._new_prefix} read_{consistency_level}_UCS10")
+        self.add_file_set(f"{self._old_prefix} vs {self._new_prefix} {read}_{consistency_level}_LCS-UCS10",
+                          f"{self._old_prefix} {read}_{consistency_level}_LCS", f"*{self._old_prefix} {read}_{consistency_level}_LCS",
+                        f"{self._new_prefix} {read}_{consistency_level}_UCS10", f"*{self._new_prefix} {read}_{consistency_level}_UCS10")
 
 
     def run_default(self, consistency_level="LOCAL_ONE"):
-        self.add_default(consistency_level)
+        self.add_cmp_different_versions(consistency_level)
         self.run()
 
     def _graph_item(self, old_label, old_file_name, new_label, new_file_name):
