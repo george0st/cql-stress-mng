@@ -302,13 +302,23 @@ def compare_group():
 @click.option("-d", "--dir", help="directory with particular items (default './stress_output/')", default="./stress_output/")
 @click.option("-c", "--console", help="compare output to the console (default 'True')", default="True")
 @click.option("-g", "--graph", help="compare output to the sub-directory 'graph'  form (default 'graph')", default="graph")
-def compare(dir, console, graph):
+@click.option("-t", "--type", help="compare type '0' - the different versions, '1' - the same versions (default '0')", default="0")
+@click.option("-o", "--oldprefix", help="prefix for old files (default 'v4')", default="v4")
+@click.option("-n", "--newprefix", help="prefix for new files (default 'v5')", default="v5")
+@click.option("-r", "--read", help="identification of read operations (default 'read')", default="read")
+@click.option("-w", "--write", help="identification of write operations (default 'write')", default="write")
+def compare(dir, console, graph, type, oldprefix, newprefix, read, write):
     """Compare data from TXT(JSON) to the sub-dir 'graph'"""
-    comp = StressCompare(path.join(dir, "extract"))
+    comp = StressCompare(path.join(dir, "extract"), old_prefix=oldprefix, new_prefix=newprefix)
+    int_type = int(type)
 
     compact_level = "LOCAL_ONE"
     print(f"==== {compact_level}===")
-    comp.add_default(compact_level)
+    match int_type:
+        case 0:
+            comp.add_cmp_different_versions(compact_level, read, write)
+        case default:
+            comp.add_cmp_same_versions(compact_level, read, write)
     if helper.str2bool(console):
         comp.text()
     if len(graph) > 0:
@@ -316,7 +326,11 @@ def compare(dir, console, graph):
 
     compact_level = "LOCAL_QUORUM"
     print(f"==== {compact_level}===")
-    comp.add_default(compact_level)
+    match int_type:
+        case 0:
+            comp.add_cmp_different_versions(compact_level, read, write)
+        case default:
+            comp.add_cmp_same_versions(compact_level, read, write)
     if helper.str2bool(console):
         comp.text()
     if len(graph) > 0:
