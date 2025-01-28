@@ -100,7 +100,7 @@ echo 'START read, 100x thread: 2/1...'
 ```
 ### 1.2 Extract
 
-The extract data from 'cassandra-stress' output in format CSV and TXT(JSON).
+The 'Extract' data from 'cassandra-stress' output in format CSV and TXT(JSON).
 
 ```sh
 python3.11 stress/stress_mng.py extract -d "C:/Python/.NEW Compare V4 vs V5/FULLFinal/"
@@ -108,7 +108,7 @@ python3.11 stress/stress_mng.py extract -d "C:/Python/.NEW Compare V4 vs V5/FULL
 
 ### 1.3 Compare
 
-The Compare data based on TXT(JSON) files to text (in console) or graphs (as PNG files)
+The 'Compare' data based on TXT(JSON) files to text (in console) or graphs (as PNG files)
 
 ```sh
 python3.11 stress/stress_mng.py compare -d "C:/Python/.NEW Compare V4 vs V5/FULLFinal/"
@@ -116,10 +116,16 @@ python3.11 stress/stress_mng.py compare -d "C:/Python/.NEW Compare V4 vs V5/FULL
 
 ### 1.4 Graph
 
-The Create graphs from TXT(JSON) to the sub-dir 'graph'. 
+The 'Create' graphs from TXT(JSON) to the sub-dir 'graph'. 
 
 ```sh
 python3.11 stress/stress_mng.py graph -d "C:/Python/.4NEW Compare V5 NONPROD/"
+```
+
+or graphs plus graph summaries
+
+```sh
+python3.11 stress/stress_mng.py graph -d "C:/Python/.4NEW Compare V5 NONPROD/" -g aa
 ```
 
 ## 2. Sample of outputs
